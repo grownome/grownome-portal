@@ -1,7 +1,7 @@
 -- :name create-device! :! :n
 -- :doc creates a new device record
 INSERT INTO
-  device(id,name,resin_name,short_link,created_on)
+  devices(id,name,resin_name,short_link,created_on)
 VALUES(:id, :name, :resin_name, :short_link, :created_on)
 
 -- :name get-devices :? :n

@@ -27,7 +27,7 @@
  (fn [_ [ device]]
    {:http {:method      :post
            :url         "/device"
-           :ajax-map {:body  device}
+           :ajax-map {:params device}
            :error-event [:common/set-error]}})
  (fn [{:keys [db]} [_ devices]]
    {:db (assoc db :devices devices)}))
@@ -64,7 +64,7 @@
         [b/Input {:type "text"
                   :name "id"
                   :value (:id @device)
-                  :on-change #(swap! device assoc-in [:id] (-> % .-target .-value))
+                  :on-change #(swap! device assoc-in [:id] (js/parseInt (-> % .-target .-value)))
                   :placeholder "12392811232"}]]
        [b/FormGroup
         [b/Label {:for "name"} "Device Name"]
@@ -77,20 +77,25 @@
         [b/Label {:for "resin_name"} "Resin Name"]
         [b/Input {:type "text"
                   :name "resin_name"
-                  :value (:resin-name @device)
-                  :on-change #(swap! device assoc-in [:resin-name] (-> % .-target .-value))
+                                        ;These are underscores to play nice with the db.
+                  ;There are some docs on how to make them change automatically
+                  :value (:resin_name @device)
+                  :on-change #(swap! device assoc-in [:resin_name] (-> % .-target .-value))
                   :placeholder "broken-sunrise"}]]
        [b/FormGroup
         [b/Label {:for "short_link"} "Shortlink"]
         [b/Input {:type "text"
                   :name "short_link"
-                  :value (:short-link @device)
-                  :on-change #(swap! device assoc-in [:short-link] (-> % .-target .-value))
+                  :value (:short_link @device)
+                  :on-change #(swap! device assoc-in [:short_link] (-> % .-target .-value))
                   :placeholder "nome.run/adevice"}]]]]
      [b/Row
       [b/Col
        [b/Button
-        { :on-click #(rf/dispatch [::post-device @device])}
+        { :on-click #(do
+                       (swap! device assoc-in [:created_on] (js/Date.))
+
+                       (rf/dispatch [::post-device @device]))}
         "Add Device"
         ]]]])
   )

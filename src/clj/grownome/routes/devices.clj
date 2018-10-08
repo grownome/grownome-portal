@@ -12,10 +12,10 @@
   (response/ok (db/get-devices)))
 
 (defn post-device
-  [{:keys [body] :as input}]
-  (log/debug input)
-  (let [creation (db/create-device! body)]
-    (response/created creation)))
+  [{:keys [params] :as input}]
+  (log/debug params)
+  (let [creation (db/create-device! params)]
+    (response/created )))
 
 (defn devices-routes []
   [""
