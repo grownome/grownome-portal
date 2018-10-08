@@ -1,0 +1,3 @@
+{:prod true
+ :databse-url "postgresql://google/grownome?useSSL=false&user=postgres&password=NUAmudapridpov5"
+ :port 3000}

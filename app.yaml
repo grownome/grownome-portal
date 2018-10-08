@@ -1,0 +1,7 @@
+runtime: custom
+env: flex
+instance_class: B1
+manual_scaling:
+  instances: 1
+beta_settings:
+    cloud_sql_instances: grownome:us-central1:grownome
