@@ -25,17 +25,21 @@
     title]])
 
 (defn navbar []
-  (r/with-let [expanded? (r/atom true)]
-    [b/Navbar {:light true
-               :class-name "navbar-dark bg-primary"
-               :expand "md"}
-     [b/NavbarBrand {:href "/"} "grownome"]
-     [b/NavbarToggler {:on-click #(swap! expanded? not)}]
-     [b/Collapse {:is-open @expanded? :navbar true}
-      [b/Nav {:class-name "mr-auto" :navbar true}
-       [nav-link "Home" :home]
-       [nav-link "Devices" :devices]
-       [nav-link "About" :about]]]]))
+  (let [session @(rf/subscribe [:session])]
+    (fn []
+      (r/with-let [expanded? (r/atom true)]
+        [b/Navbar {:light true
+                   :class-name "navbar-dark bg-primary"
+                   :expand "md"}
+         [b/NavbarBrand {:href "/"} "grownome"]
+         [b/NavbarToggler {:on-click #(swap! expanded? not)}]
+         [b/Collapse {:is-open @expanded? :navbar true}
+          [b/Nav {:class-name "mr-auto" :navbar true}
+           [nav-link "Home" :home]
+           [nav-link "Devices" :devices]
+           [nav-link "About" :about]
+           (if (nil? (:email session))
+             [b/NavLink  {:href "/auth/init"} "Sign-in"])]]]))))
 
 (defn about-page []
   [:div.container
@@ -46,11 +50,6 @@
 (rf/reg-event-fx
   ::load-about-page
   (constantly nil))
-
-(kf/reg-controller
-  ::about-controller
-  {:params (constantly true)
-   :start  [::load-about-page]})
 
 (rf/reg-sub
   :docs
@@ -66,23 +65,34 @@
       [:div ]])])
 
 (kf/reg-chain
-  ::load-home-page
+  ::load-session
   (fn [_ _]
     {:http {:method      :get
             :url         "/profile"
             :error-event [:common/set-error]}})
-  (fn [{:keys [db]} [_ profile]]
-    {:db (assoc db :profile profile)}))
+  (fn [{:keys [db]} [_ session]]
+    {:db (assoc db :session session)}))
 
+
+(kf/reg-controller
+ ::session-controller
+ {:params (constantly true)
+  :start  [::load-session]})
+
+
+(rf/reg-sub
+ :session
+ (fn [db _]
+   (:session db)))
 
 (defn root-component []
   [:div
    [navbar]
    [kf/switch-route (fn [route] (get-in route [:data :name]))
     :home [home-page]
-    :about [ about-page]
-    :devices [ devices/devices-page]
-    :profile  [ profile/profile-page]
+    :about [about-page]
+    :devices [devices/devices-page]
+    :profile  [profile/profile-page]
     nil [:div ""]]])
 
 ;; -------------------------

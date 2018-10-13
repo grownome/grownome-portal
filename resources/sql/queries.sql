@@ -4,7 +4,7 @@ INSERT INTO
   devices(id,name,resin_name,short_link,created_on)
 VALUES(:id, :name, :resin_name, :short_link, :created_on)
 
--- :name get-devices :? :n
+-- :name get-devices :? :*
 -- :doc gets all devices
 SELECT * FROM devices
 
@@ -13,12 +13,12 @@ SELECT * FROM devices
 SELECT * FROM devices
 WHERE id = :id
 
--- :name get-images-by-device :? :n
+-- :name get-images-by-device :? :*
 -- :doc  gets all of the images for a device
 SELECT * FROM images
 WHERE device_id = :id
 
--- :name get-images-by-device-limit :? :n
+-- :name get-images-by-device-limit :? :*
 -- :doc  gets all of the images for a device to a limit
 SELECT * FROM images
 WHERE device_id = :id
@@ -26,12 +26,12 @@ ORDER BY created_on DESC
 LIMIT :limit
 
 
--- :name get-timelapses-by-device :? :n
+-- :name get-timelapses-by-device :? :*
 -- :doc  gets all of the images for a device
 SELECT * FROM timelapses
  WHERE device_id = :id
 
--- :name get-timelapses-by-device-limit :? :n
+-- :name get-timelapses-by-device-limit :? :*
 -- :doc  gets all of the images for a device to a limit
 SELECT * FROM timelapses
  WHERE device_id = :id
@@ -45,7 +45,7 @@ INSERT INTO
   owner(user_id,device_id,created_on)
 VALUES(:user_id,:device_id,:created_on)
 
--- :name get-user-devices :? :n
+-- :name get-user-devices :? :*
 -- :doc  gets all of the devices a user own
 SELECT * FROM owner
 WHERE user_id = :user_id

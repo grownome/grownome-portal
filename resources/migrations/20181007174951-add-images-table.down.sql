@@ -1,1 +1,1 @@
-DROP TABLE imagse CASCADE;
+DROP TABLE images CASCADE;

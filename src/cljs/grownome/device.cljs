@@ -15,9 +15,9 @@
 
 (kf/reg-chain
  ::load-device-page
- (fn [_ _]
+ (fn [_ [device-id]]
    {:http {:method      :get
-           :url         "/device"
+           :url         (str "/device/"  device-id)
            :error-event [:common/set-error]}})
  (fn [{:keys [db]} [_ devices]]
    {:db (assoc db :devices devices)}))

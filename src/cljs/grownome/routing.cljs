@@ -12,7 +12,9 @@
   [["/" :home]
    ["/about" :about]
    ["/profile" :profile]
-   ["/devices" :devices]])
+   ["/devices" :devices]
+   ["/device/:id" :device]
+   ["/user/:id" :user]])
 
 (defonce router (reitit/router routes))
 

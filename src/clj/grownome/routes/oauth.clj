@@ -12,19 +12,32 @@
   (log/debug "in init")
   request)
 
+(defn access-token-from-session
+ [session]
+  (get-in session [::oauth2/access-tokens :auth0 :token]))
+
+(defn get-oauth-metadata
+  [access-token]
+  (:body
+   (client/get "https://grownome.auth0.com/userinfo"
+               {:headers {"Authorization"
+                          (str "Bearer " access-token)}
+                :as :json})))
+
 (defn get-user-profile-wrap
   [handler]
   (fn
     [req]
-    (let [{:keys [session] :as resp} (handler req)]
-      (assoc-in resp [:session ::oauth2/profile]
-             (:body   (client/get "https://grownome.auth0.com/userinfo"
-                             {:headers {"Authorization"
-                                        (str "Bearer "
-                                             (:token
-                                              (:auth0
-                                               (::oauth2/access-tokens session))))}
-                              :as :json}))))))
+    (let [{:keys [session] :as resp} (handler req)
+          auth0-identity (get-oauth-metadata (access-token-from-session session))
+          email  (:email auth0-identity)
+          is-admin (if (re-find #".*@grownome.com$" email ) true false )]
+      (-> resp
+          (assoc-in [:session ::oauth2/profile]
+                    auth0-identity)
+          (assoc-in [:session :identity]
+                    {:email (:email auth0-identity)
+                     :admin? is-admin})))))
 
 (defn oauth-callback
   "Handles the callback from 0auth."

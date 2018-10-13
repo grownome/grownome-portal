@@ -20,10 +20,10 @@
   :start  [::load-devices-page]})
 
 (kf/reg-chain
- ::load-devices-page
+ ::load-profile-page
  (fn [_ _]
    {:http {:method      :get
-           :url         "/devices"
+           :url         "/profile"
            :error-event [:common/set-error]}})
  (fn [{:keys [db]} [_ devices]]
    {:db (assoc db :devices devices)}))

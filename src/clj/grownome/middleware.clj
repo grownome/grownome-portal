@@ -16,7 +16,7 @@
             [buddy.auth.accessrules :refer [restrict]]
             [buddy.auth :refer [authenticated?]]
             [buddy.auth.backends.session :refer [session-backend]])
-  (:import 
+  (:import
            [org.joda.time ReadableInstant]))
 
 (defn wrap-internal-error [handler]

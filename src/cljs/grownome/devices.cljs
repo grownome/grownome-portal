@@ -17,10 +17,10 @@
  ::load-devices-page
  (fn [_ _]
    {:http {:method      :get
-           :url         "/device"
+           :url         "/devices"
            :error-event [:common/set-error]}})
  (fn [{:keys [db]} [_ devices]]
-   {:db (assoc db :devices devices)}))
+   {:db (assoc db :devices (into {} (map #(vector (:id %) %) devices)) )}))
 
 (kf/reg-chain
  ::post-device
@@ -29,36 +29,59 @@
            :url         "/device"
            :ajax-map {:params device}
            :error-event [:common/set-error]}})
- (fn [{:keys [db]} [_ devices]]
-   {:db (assoc db :devices devices)}))
+ (fn [{:keys [db]} [_ device]]
+   {:dispatch [::load-devices-page]}))
 
+
+(rf/reg-sub
+ :device-ids
+ (fn [db _]
+   (keys (:devices db))))
+
+(rf/reg-sub
+ :device
+ (fn [db [_ id]]
+   (get-in db [:devices id])))
 
 (defn device-card
   [id]
-    [b/Card
-     [b/CardImg {:top true
-                 :width "100%"
-                 :src "https://placeholdit.imgix.net/~text?txtsize=33&txt=318%C3%97180&w=318&h=180"
+  (let [device @(rf/subscribe [:device id])
+        image-slider-value (r/atom 0)]
+    (fn [id]
+      [b/Card
+       (when (not-empty  (:images device) )
+         [b/CardImg {:top true
+                     :width "100%"
+                     :src (get  (nth (:images device) @image-slider-value) :path "test")
 
-                 }]
-     [b/CardBody
-      [:div
-       [b/CardTitle "Device1"]
-       [:div "time slider"]
-       [b/Input {:type "range" :min 1 :max 100}]
-       [b/Button "metrics"]
-       [b/Button "Images"]]
-      ]
-     ]
-  )
+                     }])
+       [b/CardBody
+        [:div
+         [b/CardTitle (:name device)]
+         [:div "time slider"]
+
+         [b/Input {:type "range"
+                   :value @image-slider-value
+                   :on-change #(reset! image-slider-value (js/parseInt (-> % .-target .-value)))
+                   :min 0
+                   :max (dec (count (:images device)))}]
+         [b/Button "metrics"]
+         [:div (str "total image count: " (count (:images device)))]
+         " "
+         [b/Button "Images"]
+         " "
+         [b/Button {:color "danger"} "Delete"]
+         ]
+        ]
+       ])))
 
 (defn new-device []
-  (let [device (atom {})
+  (let [device (r/atom {})
 
         ]
     [:div.container
      [:div.row>div.col-sm-12
-      [b/Form 
+      [b/Form
        [b/FormGroup
         [b/Label {:for "iot_id"} "IOT Numeric ID"]
         [b/Input {:type "text"
@@ -100,18 +123,18 @@
         ]]]])
   )
 (defn devices-page []
-  [b/Container
-   [b/Row
-    [b/Col
-     [device-card 1]]
-    [b/Col
-     [device-card 1]]
-    [b/Col
-     [device-card 1]]]
-
-   [:div.container
-    [new-device]
-    ]
-   
-     ])
+  (let [device-ids @(rf/subscribe [:device-ids])
+        session    @(rf/subscribe [:session])
+        rows-of-three (partition-all 3 device-ids)
+        ]
+    [b/Container
+     (map-indexed
+      (fn [index row]
+        [b/Row {:key (str "device-id-row-" index )}
+         (for [device-id row]
+           [b/Col {:key (str "device-" device-id) :xs "4"}
+            [device-card device-id]])]) rows-of-three)
+     (if (:admin? session)
+       [:div.container {:style {"border" "1px"}}
+        [new-device]])]))
 

@@ -1,5 +1,5 @@
 CREATE TABLE devices(
-  id             INTEGER        PRIMARY KEY,
+  id             BIGSERIAL         PRIMARY KEY,
   name           text           NOT NULL,
   resin_name     text           NOT NULL,
   short_link     text           NOT NULL,

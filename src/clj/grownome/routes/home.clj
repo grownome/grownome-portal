@@ -9,10 +9,13 @@
 (defn home-page [request]
   (layout/render "home.html"))
 
+(defn profile [request]
+  (response/ok (get-in request [:session :identity]) ))
+
 (defn home-routes []
   [""
    {:middleware [middleware/wrap-csrf
                  middleware/wrap-formats]}
    ["/" {:get home-page}]
-   ])
+   ["/profile" {:get profile}]])
 
