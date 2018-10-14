@@ -12,7 +12,6 @@
  {:params (constantly true)
   :start  [::load-devices-page]})
 
-
 (kf/reg-chain
  ::load-devices-page
  (fn [_ _]
@@ -76,9 +75,7 @@
        ])))
 
 (defn new-device []
-  (let [device (atom {})
-
-        ]
+  (let [device (atom {})]
     [:div.container
      [:div.row>div.col-sm-12
       [b/Form

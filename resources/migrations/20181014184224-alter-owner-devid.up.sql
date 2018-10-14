@@ -1,0 +1,2 @@
+ALTER TABLE owners
+  ALTER COLUMN device_id TYPE BIGINT

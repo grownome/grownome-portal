@@ -23,11 +23,28 @@
         url-image-data (map prep-image raw-image-data)]
     (assoc device :images url-image-data)))
 
-(defn get-devices
+(defn get-devices-admin
   [req]
   (let [devices (db/get-devices)
         devices-with-image-links (into [] (map (partial get-device-images 50) devices))]
     (response/ok devices-with-image-links)))
+
+(defn get-devices-user
+  [req]
+  (let [devices (db/get-devices-by-user
+                 {:id (get-in req [:session :identity :id])})
+        devices-with-image-links
+        (into [] (map (partial get-device-images 50) devices))]
+    (response/ok devices-with-image-links)))
+
+(defn get-devices
+  [{:keys [session] :as req}]
+  (if (:admin session)
+    (get-devices-admin req)
+    (get-devices-user req)))
+
+
+
 
 (defn post-device
   [{:keys [params] :as input}]

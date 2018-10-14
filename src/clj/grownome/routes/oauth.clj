@@ -1,6 +1,7 @@
 (ns grownome.routes.oauth
   (:require [ring.util.http-response :refer [ok found]]
             [clojure.java.io :as io]
+            [grownome.db.core :as  db]
             [clj-http.client :as client]
             [ring.middleware.oauth2 :as oauth2]
             [grownome.oauth2 :as okta]
@@ -24,20 +25,44 @@
                           (str "Bearer " access-token)}
                 :as :json})))
 
+(defn get-or-create-user
+  [auth0-identity]
+  (if-let [user (db/get-user {:id (:sub auth0-identity)})]
+    (do
+      (db/update-user-last-used! {:last_login (new java.util.Date)
+                                  :is_active true
+                                  :id (:sub auth0-identity)})
+
+      user)
+    (do
+      (let [is-admin (if (re-find #".*@grownome.com$"
+                                  (:email auth0-identity))
+                       true
+                       false)]
+        (db/create-user! {:email (:email auth0-identity)
+                          :id (:sub auth0-identity)})
+        (if is-admin
+          (db/update-user-is-admin! {:admin true
+                                     :id (:sub auth0-identity)})
+          (db/update-user-is-admin! {:admin false
+                                     :id (:sub auth0-identity)}))
+        (db/update-last-used! {:last_login (new java.util.Date)
+                               :is_active true
+                               :id (:sub auth0-identity)}))
+      (db/get-user {:id (:sub auth0-identity)}))))
+
 (defn get-user-profile-wrap
   [handler]
   (fn
     [req]
     (let [{:keys [session] :as resp} (handler req)
           auth0-identity (get-oauth-metadata (access-token-from-session session))
-          email  (:email auth0-identity)
-          is-admin (if (re-find #".*@grownome.com$" email ) true false )]
+          db-entry (get-or-create-user auth0-identity)]
       (-> resp
           (assoc-in [:session ::oauth2/profile]
                     auth0-identity)
           (assoc-in [:session :identity]
-                    {:email (:email auth0-identity)
-                     :admin? is-admin})))))
+                    db-entry)))))
 
 (defn oauth-callback
   "Handles the callback from 0auth."
