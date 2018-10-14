@@ -21,6 +21,11 @@ SELECT d.id, d.name, d.resin_name, d.short_link, d.created_on
          INNER JOIN users u on o.user_id = u.id
 WHERE u.id = :id
 
+-- :name get-metrics-by-device :? :*
+-- :doc  gets all of the metrics for a device
+SELECT * FROM metrics
+ WHERE device_id = :id
+
 -- :name get-images-by-device :? :*
 -- :doc  gets all of the images for a device
 SELECT * FROM images

@@ -44,7 +44,8 @@
 
 (defn device-card
   [id]
-  (let [device @(rf/subscribe [:device id])
+  (let [device     @(rf/subscribe [:device id])
+        session    @(rf/subscribe [:session])
         image-slider-value (r/atom 0)]
     (fn [id]
       [b/Card
@@ -57,6 +58,10 @@
        [b/CardBody
         [:div
          [b/CardTitle (:name device)]
+         (when (:admin session)
+           [b/CardTitle (:resin_name device)])
+         (when (:admin session)
+           [b/CardTitle (:id device)])
          [:div "time slider"]
 
          [b/Input {:type "range"
@@ -129,9 +134,9 @@
       (fn [index row]
         [b/Row {:key (str "device-id-row-" index )}
          (for [device-id row]
-           [b/Col {:key (str "device-" device-id) :xs "4"}
+           [b/Col {:key (str "device-" device-id) :sm "4"}
             [device-card device-id]])]) rows-of-three)
-     (if (:admin? session)
+     (if (:admin session)
        [:div.container {:style {"border" "1px"}}
         [new-device]])]))
 

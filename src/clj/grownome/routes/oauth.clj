@@ -5,7 +5,8 @@
             [clj-http.client :as client]
             [ring.middleware.oauth2 :as oauth2]
             [grownome.oauth2 :as okta]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log]
+            [ring.util.http-response :as response]))
 
 (defn oauth-init
   "Initiates the 0auth"
@@ -46,7 +47,7 @@
                                      :id (:sub auth0-identity)})
           (db/update-user-is-admin! {:admin false
                                      :id (:sub auth0-identity)}))
-        (db/update-last-used! {:last_login (new java.util.Date)
+        (db/update-user-last-used! {:last_login (new java.util.Date)
                                :is_active true
                                :id (:sub auth0-identity)}))
       (db/get-user {:id (:sub auth0-identity)}))))
@@ -64,6 +65,16 @@
           (assoc-in [:session :identity]
                     db-entry)))))
 
+(defn sign-out
+  [req]
+  (response/permanent-redirect "https://grownome.auth0.com/v2/logout"))
+
+(defn drop-session
+  [handler]
+  (fn [req]
+    (let [resp (handler req)]
+      (assoc resp :session nil))))
+
 (defn oauth-callback
   "Handles the callback from 0auth."
   [{:keys [session params] :as callback}]
@@ -75,17 +86,15 @@
         (assoc :flash {:denied true}))
     ; fetch the request token and do anything else you wanna do if not denied.
     (let [{:keys [user_id screen_name]} callback]
-
       (-> (found "/")
           (assoc :session
                  (assoc session :user-id user_id :screen-name screen_name)))))
-  callback
-
-  )
+  callback)
 
 
 (defn oauth-routes []
   ["/auth"
    ["/init" {:get (okta/wrap-oauth2-okta oauth-init)}]
+   ["/out" {:get (drop-session sign-out)}]
    ["/callback" {:get (get-user-profile-wrap (okta/wrap-oauth2-okta  oauth-callback))}]])
 

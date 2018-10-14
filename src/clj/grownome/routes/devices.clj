@@ -39,7 +39,7 @@
 
 (defn get-devices
   [{:keys [session] :as req}]
-  (if (:admin session)
+  (if (get-in session [:identity :admin])
     (get-devices-admin req)
     (get-devices-user req)))
 

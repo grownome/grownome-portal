@@ -25,21 +25,27 @@
     title]])
 
 (defn navbar []
-  (let [session @(rf/subscribe [:session])]
+  (let [session (rf/subscribe [:session])]
     (fn []
-      (r/with-let [expanded? (r/atom true)]
+      (r/with-let [expanded? (r/atom true)
+                   ]
         [b/Navbar {:light true
                    :class-name "navbar-dark bg-primary"
                    :expand "md"}
          [b/NavbarBrand {:href "/"} "grownome"]
          [b/NavbarToggler {:on-click #(swap! expanded? not)}]
          [b/Collapse {:is-open @expanded? :navbar true}
-          [b/Nav {:class-name "mr-auto" :navbar true}
-           [nav-link "Home" :home]
-           [nav-link "Devices" :devices]
-           [nav-link "About" :about]
-           (if (nil? (:email session))
-             [b/NavLink  {:href "/auth/init"} "Sign-in"])]]]))))
+          (if (nil? (:email @session))
+            [b/Nav {:class-name "mr-auto" :navbar true}
+             [nav-link "Home" :home]
+             [nav-link "About" :about]
+             [b/NavLink  {:href "/auth/init"} "Sign-in"]]
+            [b/Nav {:class-name "mr-auto" :navbar true}
+             [nav-link "Home" :home]
+             [nav-link "Devices" :devices]
+             [nav-link "About" :about]
+             [b/NavLink  {:href "/auth/out"} "Sign-out"]
+             ])]]))))
 
 (defn about-page []
   [:div.container
