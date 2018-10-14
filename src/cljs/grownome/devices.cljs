@@ -76,7 +76,7 @@
        ])))
 
 (defn new-device []
-  (let [device (r/atom {})
+  (let [device (atom {})
 
         ]
     [:div.container
@@ -120,8 +120,8 @@
 
                        (rf/dispatch [::post-device @device]))}
         "Add Device"
-        ]]]])
-  )
+        ]]]]))
+
 (defn devices-page []
   (let [device-ids @(rf/subscribe [:device-ids])
         session    @(rf/subscribe [:session])
