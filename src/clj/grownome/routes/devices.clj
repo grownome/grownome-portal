@@ -102,6 +102,6 @@
     ["/:id/metrics" {:get get-device-metrics}]]
    ["/admin"
     ["/device" {:post post-device
-               :get  get-device-admin}]]
+                :get  get-device-admin}]]
    ])
 

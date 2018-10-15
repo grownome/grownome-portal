@@ -15,6 +15,6 @@
      :scopes           [:profile :email :openid]
      :launch-uri       (or (-> c/env :oauth-launch-uri)  "/auth/init")
      :redirect-uri     (or (-> c/env :oauth-redirect-uri) "/auth/callback")
-     :logout-uri       (or (-> c/env :oauth-logour-uri) "/auth/logout")
+     :logout-uri       (or (-> c/env :oauth-logout-uri) "/auth/logout")
      :landing-uri      (or (-> c/env :oauth-landing-uri ) "/")}}))
 

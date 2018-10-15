@@ -74,11 +74,9 @@
 (defn metrics-page []
   (let [device-id @(rf/subscribe [:focused-device])
         loading   @(rf/subscribe [:loading-metrics])
-        session   @(rf/subscribe [:session])
-        ]
+        session   @(rf/subscribe [:session])]
     (when (and (not loading) (:email session) )
       [b/Container
-       [device-metrics-card device-id "humidity"]
        [device-metrics-card device-id "temperature"]
-       ])))
+       [device-metrics-card device-id "humidity"]])))
 

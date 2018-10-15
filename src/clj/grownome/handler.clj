@@ -3,6 +3,7 @@
             [grownome.layout :refer [error-page]]
             [grownome.routes.home :refer [home-routes]]
             [grownome.routes.devices :refer [devices-routes]]
+            [grownome.routes.alerts :refer [alerts-routes]]
             [grownome.routes.oauth :refer [oauth-routes]]
             [reitit.ring :as ring]
             [ring.middleware.content-type :refer [wrap-content-type]]
@@ -22,6 +23,7 @@
       (ring/router
         [(home-routes)
          (devices-routes)
+         (alerts-routes)
          (oauth-routes)])
       (ring/routes
         (ring/create-resource-handler
