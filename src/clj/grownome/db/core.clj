@@ -5,6 +5,9 @@
     [clojure.tools.logging :as log]
     [conman.core :as conman]
     [java-time :as jt]
+    [camel-snake-kebab.extras :refer [transform-keys]]
+    [camel-snake-kebab.core :refer [->kebab-case-keyword
+                                    ->snake_case_keyword]]
     [grownome.config :refer [env]]
     [mount.core :refer [defstate]])
   (:import org.postgresql.util.PGobject
@@ -83,3 +86,29 @@
   IPersistentVector
   (sql-value [value] (to-pg-json value)))
 
+
+(defn result-one-snake->kebab
+  [this result options]
+  (->> (hugsql.adapter/result-one this result options)
+       (transform-keys ->kebab-case-keyword)))
+
+(defn result-many-snake->kebab
+  [this result options]
+  (->> (hugsql.adapter/result-many this result options)
+       (map #(transform-keys ->kebab-case-keyword %))))
+
+(defn params->snake
+  [params]
+  (transform-keys ->snake_case_keyword params))
+
+(defmethod hugsql.core/hugsql-result-fn :1 [sym]
+  'grownome.db.core/result-one-snake->kebab)
+
+(defmethod hugsql.core/hugsql-result-fn :one [sym]
+  'grownome.db.core/result-one-snake->kebab)
+
+(defmethod hugsql.core/hugsql-result-fn :* [sym]
+  'grownome.db.core/result-many-snake->kebab)
+
+(defmethod hugsql.core/hugsql-result-fn :many [sym]
+  'grownome.db.core/result-many-snake->kebab)

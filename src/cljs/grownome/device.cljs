@@ -7,12 +7,6 @@
             [grownome.ajax :as ajax]
             [grownome.routing :as routing]))
 
-(kf/reg-controller
-  ::device-controller
-  {:params (constantly true)
-   :start  [::load-device-page]})
-
-
 (kf/reg-chain
  ::load-device-page
  (fn [_ [device-id]]

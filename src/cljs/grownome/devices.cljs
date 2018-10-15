@@ -9,7 +9,8 @@
 
 (kf/reg-controller
  ::devices-controller
- {:params (constantly true)
+ {:params (fn [{:keys [data path-params]}]
+            (when (= :devices (:name data)) true))
   :start  [::load-devices-page]})
 
 (kf/reg-chain
@@ -59,7 +60,7 @@
         [:div
          [b/CardTitle (:name device)]
          (when (:admin session)
-           [b/CardTitle (:resin_name device)])
+           [b/CardTitle (:resin-name device)])
          (when (:admin session)
            [b/CardTitle (:id device)])
          [:div "time slider"]
@@ -69,7 +70,8 @@
                    :on-change #(reset! image-slider-value (js/parseInt (-> % .-target .-value)))
                    :min 0
                    :max (dec (count (:images device)))}]
-         [b/Button "metrics"]
+         [b/Button {:href (kf/path-for
+                           [:metrics {:id (:id device)}])} "metrics" ]
          [:div (str "total image count: " (count (:images device)))]
          " "
          [b/Button "Images"]
@@ -85,7 +87,7 @@
      [:div.row>div.col-sm-12
       [b/Form
        [b/FormGroup
-        [b/Label {:for "iot_id"} "IOT Numeric ID"]
+        [b/Label {:for "iot-id"} "IOT Numeric ID"]
         [b/Input {:type "text"
                   :name "id"
                   :value (:id @device)
@@ -99,26 +101,26 @@
                   :on-change #(swap! device assoc-in [:name] (-> % .-target .-value))
                   :placeholder "Grow Box (not unique)"}]]
        [b/FormGroup
-        [b/Label {:for "resin_name"} "Resin Name"]
+        [b/Label {:for "resin-name"} "Resin Name"]
         [b/Input {:type "text"
-                  :name "resin_name"
+                  :name "resin-name"
                                         ;These are underscores to play nice with the db.
                   ;There are some docs on how to make them change automatically
-                  :value (:resin_name @device)
-                  :on-change #(swap! device assoc-in [:resin_name] (-> % .-target .-value))
+                  :value (:resin-name @device)
+                  :on-change #(swap! device assoc-in [:resin-name] (-> % .-target .-value))
                   :placeholder "broken-sunrise"}]]
        [b/FormGroup
-        [b/Label {:for "short_link"} "Shortlink"]
+        [b/Label {:for "short-link"} "Shortlink"]
         [b/Input {:type "text"
-                  :name "short_link"
-                  :value (:short_link @device)
-                  :on-change #(swap! device assoc-in [:short_link] (-> % .-target .-value))
+                  :name "short-link"
+                  :value (:short-link @device)
+                  :on-change #(swap! device assoc-in [:short-link] (-> % .-target .-value))
                   :placeholder "nome.run/adevice"}]]]]
      [b/Row
       [b/Col
        [b/Button
         { :on-click #(do
-                       (swap! device assoc-in [:created_on] (js/Date.))
+                       (swap! device assoc-in [:created-on] (js/Date.))
 
                        (rf/dispatch [::post-device @device]))}
         "Add Device"

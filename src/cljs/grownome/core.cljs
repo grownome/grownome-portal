@@ -7,6 +7,7 @@
             [grownome.profile :as profile]
             [grownome.devices :as devices]
             [grownome.device :as device]
+            [grownome.metrics :as metrics]
             [grownome.ajax :as ajax]
             [grownome.routing :as routing])
   (:import goog.History))
@@ -99,6 +100,7 @@
     :about [about-page]
     :devices [devices/devices-page]
     :profile  [profile/profile-page]
+    :metrics  [metrics/metrics-page]
     nil [:div ""]]])
 
 ;; -------------------------

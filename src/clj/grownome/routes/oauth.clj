@@ -5,6 +5,8 @@
             [clj-http.client :as client]
             [ring.middleware.oauth2 :as oauth2]
             [grownome.oauth2 :as okta]
+            [camel-snake-kebab.extras :refer [transform-keys]]
+            [camel-snake-kebab.core :as kebab]
             [clojure.tools.logging :as log]
             [ring.util.http-response :as response]))
 
@@ -28,11 +30,14 @@
 
 (defn get-or-create-user
   [auth0-identity]
+  (log/debug auth0-identity)
   (if-let [user (db/get-user {:id (:sub auth0-identity)})]
     (do
-      (db/update-user-last-used! {:last_login (new java.util.Date)
-                                  :is_active true
-                                  :id (:sub auth0-identity)})
+      (db/update-user-last-used!
+       (db/params->snake
+        {:last-login (new java.util.Date)
+         :is-active true
+         :id (:sub auth0-identity)}))
 
       user)
     (do
@@ -47,9 +52,11 @@
                                      :id (:sub auth0-identity)})
           (db/update-user-is-admin! {:admin false
                                      :id (:sub auth0-identity)}))
-        (db/update-user-last-used! {:last_login (new java.util.Date)
-                               :is_active true
-                               :id (:sub auth0-identity)}))
+        (db/update-user-last-used!
+         (db/params->snake
+          {:last-login (new java.util.Date)
+           :is-active true
+           :id (:sub auth0-identity)})))
       (db/get-user {:id (:sub auth0-identity)}))))
 
 (defn get-user-profile-wrap
@@ -85,10 +92,10 @@
     (-> (found "/")
         (assoc :flash {:denied true}))
     ; fetch the request token and do anything else you wanna do if not denied.
-    (let [{:keys [user_id screen_name]} callback]
+    (let [{:keys [user-id screen-name]} callback]
       (-> (found "/")
           (assoc :session
-                 (assoc session :user-id user_id :screen-name screen_name)))))
+                 (assoc session :user-id user-id :screen-name screen-name)))))
   callback)
 
 

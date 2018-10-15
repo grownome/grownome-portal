@@ -6,6 +6,7 @@
    [clojure.string :as strings]
    [grownome.middleware :as middleware]
    [clojure.tools.logging :as log]
+   [java-time :as jt]
    [ring.util.http-response :as response]))
 
 (defn gs-to-url
@@ -26,7 +27,7 @@
 (defn get-devices-admin
   [req]
   (let [devices (db/get-devices)
-        devices-with-image-links (into [] (map (partial get-device-images 50) devices))]
+        devices-with-image-links (into [] (map (partial get-device-images 500) devices))]
     (response/ok devices-with-image-links)))
 
 (defn get-devices-user
@@ -43,7 +44,30 @@
     (get-devices-admin req)
     (get-devices-user req)))
 
+(defn fix-metrics-values
+  [metric]
+  (update metric
+          (keyword (:metric-name metric))
+          (fn [v] (.floatValue v))))
 
+(defn fix-metrics-dates
+  [metric]
+  (update metric
+          :timestamp
+          (fn [v] (jt/format "MM/dd hh:mm" v))))
+
+(def metric-fixer (comp fix-metrics-dates fix-metrics-values))
+
+(defn get-device-metrics
+  [{:keys [path-params] :as req}]
+  (log/debug path-params)
+  (let [raw-metrics
+        (db/get-metrics-by-device {:id (read-string  (:id path-params))})
+        fixed-metrics (map metric-fixer raw-metrics)
+        groups (group-by :metric-name fixed-metrics)
+        resp {:id (read-string (:id path-params))
+              :metrics groups}]
+    (response/ok resp)))
 
 
 (defn post-device
@@ -57,6 +81,8 @@
    {:middleware [middleware/wrap-csrf
                  middleware/wrap-formats]}
    ["/devices" {:get get-devices}]
-   ["/device" {:post post-device}]
+   ["/device" {:post post-device}
+    ["/:id/metrics" {:get get-device-metrics}]
+    ]
    ])
 
