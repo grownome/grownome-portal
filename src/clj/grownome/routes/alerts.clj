@@ -20,10 +20,10 @@
   [{:keys [session path-param] :as req}]
   (let [user-id (get-in session [:identity :id])
         alert-id (get path-param :id)
-        alert (db/get-alert {:id alert-id})])
-  (if alert
-    (response/ok alert)
-    (response/not-found)))
+        alert (db/get-alert {:id alert-id})]
+    (if alert
+      (response/ok alert)
+      (response/not-found))))
 
 (defn get-alerts-admin
   []

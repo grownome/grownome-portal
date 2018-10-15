@@ -1,0 +1,13 @@
+;; WARNING
+;; The dev-config.edn file is used for local environment variables, such as database credentials.
+;; This file is listed in .gitignore and will be excluded from version control by Git.
+
+{:dev true
+ :port 3000
+ ;; when :nrepl-port is set the application starts the nREPL server on load
+ :nrepl-port 7000
+
+ ;;Twitter used as an example, replace these URIs with the OAuth provider of your choice
+ ; set your dev database connection URL here
+ :database-url "jdbc:postgresql://google/grownome-dev?useSSL=false&socketFactoryArg=grownome:us-central1:grownome&user=postgres&password=f0dvvfAhDNbcjrKK&socketFactory=com.google.cloud.sql.postgres.SocketFactory"
+}
