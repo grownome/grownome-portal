@@ -42,9 +42,9 @@
              [nav-link "About" :about]
              [b/NavLink  {:href "/auth/init"} "Sign-in"]]
             [b/Nav {:class-name "mr-auto" :navbar true}
-             [nav-link "Home" :home]
+             [nav-link "Home"    :home]
              [nav-link "Devices" :devices]
-             [nav-link "About" :about]
+             [nav-link "About"   :about]
              [b/NavLink  {:href "/auth/out"} "Sign-out"]
              ])]]))))
 

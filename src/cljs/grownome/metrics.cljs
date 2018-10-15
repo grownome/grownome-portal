@@ -19,13 +19,15 @@
 
 (kf/reg-chain
  ::load-device-metrics-page
- (fn [_ [device-id]]
-   {:http {:method      :get
+ (fn [{:keys [db]} [device-id]]
+   {:db (assoc db :loading-metrics true)
+    :http {:method      :get
            :url         (str "/device/" device-id "/metrics")
            :error-event [:common/set-error]}})
  (fn [{:keys [db]} [_ metrics]]
    {:db
     (-> db
+        (assoc-in [:loading-metrics] false)
         (assoc-in [:focused-device ] (:id metrics))
         (assoc-in [:devices (:id metrics) :metrics]
                   (:metrics metrics)))}))
@@ -34,6 +36,12 @@
  :focused-device
  (fn [db _]
    (get-in db [:focused-device ])))
+
+(rf/reg-sub
+ :loading-metrics
+ (fn [db _]
+   (get-in db [:loading-metrics])))
+
 
 
 (defn get-metric-from-device
@@ -46,16 +54,15 @@
    (into [] (map :timestamp (get-in device [:metrics metric-name]))))
 
 (defn device-metrics-card
-  [id]
+  [id metric-name]
   (let [device     @(rf/subscribe [:device id])
         session    @(rf/subscribe [:session])
-        humidity (get-metric-from-device device "humidity")
-        temp     (get-metric-from-device device "temperature")
-        labels   (get-label-from-device device "humidity")]
+        metrics    (get-metric-from-device device metric-name)
+        labels     (get-label-from-device device metric-name)]
     (fn [id]
       [b/Card
        [b/CardTitle
-        [chart/chart labels humidity temp ]]
+        [chart/chart labels metric-name metrics]]
        [b/CardBody
         [:div
          [b/CardTitle (:name device)]
@@ -65,7 +72,13 @@
            [b/CardTitle (:id device)])]]])))
 
 (defn metrics-page []
-  (let [device-id @(rf/subscribe [:focused-device])]
-    [b/Container
-     [device-metrics-card device-id]]))
+  (let [device-id @(rf/subscribe [:focused-device])
+        loading   @(rf/subscribe [:loading-metrics])
+        session   @(rf/subscribe [:session])
+        ]
+    (when (and (not loading) (:email session) )
+      [b/Container
+       [device-metrics-card device-id "humidity"]
+       [device-metrics-card device-id "temperature"]
+       ])))
 

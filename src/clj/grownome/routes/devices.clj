@@ -60,7 +60,6 @@
 
 (defn get-device-metrics
   [{:keys [path-params] :as req}]
-  (log/debug path-params)
   (let [raw-metrics
         (db/get-metrics-by-device {:id (read-string  (:id path-params))})
         fixed-metrics (map metric-fixer raw-metrics)
@@ -69,20 +68,40 @@
               :metrics groups}]
     (response/ok resp)))
 
+(defn get-device
+  [{:keys [path-params session] :as req}]
+  (let [device-id (:id path-params)
+        devices (db/get-devices-by-user
+                 {:id (get-in req [:session :identity :id])})
+        a-device (first (filter #(= (:id %) device-id) devices))]
+    (if a-device
+      (response/ok a-device)
+      (response/not-found))))
+
+(defn get-device-admin
+  [{:keys [path-params session] :as req}]
+  (let [device-id (:id path-params)
+        device (db/get-device {:id device-id})]
+    (if device
+      (response/ok device)
+      (response/not-found))))
+
 
 (defn post-device
   [{:keys [params] :as input}]
-  (log/debug params)
   (let [creation (db/create-device! params)]
     (response/created "/device/" (str (:id params)))))
 
 (defn devices-routes []
   [""
    {:middleware [middleware/wrap-csrf
-                 middleware/wrap-formats]}
+                 middleware/wrap-formats
+                 middleware/wrap-restricted]}
    ["/devices" {:get get-devices}]
-   ["/device" {:post post-device}
-    ["/:id/metrics" {:get get-device-metrics}]
-    ]
+   ["/device"  {:get get-device}
+    ["/:id/metrics" {:get get-device-metrics}]]
+   ["/admin"
+    ["/device" {:post post-device
+               :get  get-device-admin}]]
    ])
 

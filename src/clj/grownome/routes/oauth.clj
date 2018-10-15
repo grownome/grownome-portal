@@ -103,5 +103,6 @@
   ["/auth"
    ["/init" {:get (okta/wrap-oauth2-okta oauth-init)}]
    ["/out" {:get (drop-session sign-out)}]
+   ["/logout" {:get (drop-session #(response/permanent-redirect "/"))}]
    ["/callback" {:get (get-user-profile-wrap (okta/wrap-oauth2-okta  oauth-callback))}]])
 

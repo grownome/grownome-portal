@@ -26,7 +26,7 @@
  ::post-device
  (fn [_ [ device]]
    {:http {:method      :post
-           :url         "/device"
+           :url         "/admin/device"
            :ajax-map {:params device}
            :error-event [:common/set-error]}})
  (fn [{:keys [db]} [_ device]]
@@ -131,14 +131,15 @@
         session    @(rf/subscribe [:session])
         rows-of-three (partition-all 3 device-ids)
         ]
-    [b/Container
-     (map-indexed
-      (fn [index row]
-        [b/Row {:key (str "device-id-row-" index )}
-         (for [device-id row]
-           [b/Col {:key (str "device-" device-id) :sm "4"}
-            [device-card device-id]])]) rows-of-three)
-     (if (:admin session)
-       [:div.container {:style {"border" "1px"}}
-        [new-device]])]))
+    (if (:email session)
+      [b/Container
+       (map-indexed
+        (fn [index row]
+          [b/Row {:key (str "device-id-row-" index )}
+           (for [device-id row]
+             [b/Col {:key (str "device-" device-id) :sm "4"}
+              [device-card device-id]])]) rows-of-three)
+       (if (:admin session)
+         [:div.container {:style {"border" "1px"}}
+          [new-device]])])))
 

@@ -8,6 +8,7 @@
             [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
             [grownome.middleware.formats :as formats]
             [muuntaja.middleware :refer [wrap-format wrap-params]]
+            [buddy.auth.accessrules :refer [wrap-access-rules]]
             [grownome.config :refer [env]]
             [ring.middleware.flash :refer [wrap-flash]]
             [immutant.web.middleware :refer [wrap-session]]
@@ -45,6 +46,16 @@
       ;; since they're not compatible with this middleware
       ((if (:websocket? request) handler wrapped) request))))
 
+(defn admin?
+  [{:keys [session] :as req}]
+  (get-in session [:identity :admin]))
+
+(def rules
+  [{:pattern #"^/devices"
+    :handler authenticated?}
+   {:pattern #"^/admin/.*"
+    :handler {:and [authenticated? admin?]}}])
+
 (defn on-error [request response]
   (error-page
     {:status 403
@@ -54,9 +65,11 @@
   (restrict handler {:handler authenticated?
                      :on-error on-error}))
 
+
 (defn wrap-auth [handler]
   (let [backend (session-backend)]
     (-> handler
+        (wrap-access-rules {:rules rules :on-error on-error})
         (wrap-authentication backend)
         (wrap-authorization backend))))
 
@@ -67,7 +80,7 @@
       (wrap-session {:cookie-attrs {:http-only false}})
       (wrap-defaults
         (-> site-defaults
-            (assoc-in [:security :anti-forgery] false)
+            (assoc-in [:security :anti-forgery] true)
             (dissoc :session)))
       wrap-internal-error))
 

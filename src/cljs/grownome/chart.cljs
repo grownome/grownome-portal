@@ -15,27 +15,25 @@
 
 
 (defn show-metrics-chart
-  [top-level-labels humidity temp]
-  (let [context (.getContext (.getElementById js/document "rev-chartjs") "2d")
+  [top-level-labels name metric]
+  (let [context (.getContext (.getElementById js/document (str "rev-chartjs-" name)) "2d")
         chart-data {:type "line"
                     :data {:labels top-level-labels
-                           :datasets [{:label "humidity"
+                           :datasets [{:label name
                                        :fill false
                                        :showLine true
                                        :borderColor "#F08080"
-                                       :data humidity}
-                                      {:label "temperature"
-                                       :fill false
-                                       :showLine true
-                                       :borderColor "#00F0F0"
-                                       :data temp}
+                                       :data metric}
                                       ]}}]
       (js/Chart. context (clj->js chart-data))))
 
 (defn chart
-  [labels humidity temp]
+  [labels name metric]
   (reagent/create-class
-    {:component-did-mount #(show-metrics-chart labels humidity temp)
-     :display-name        "chartjs-component"
+    {:component-did-mount #(show-metrics-chart labels name metric)
+     :display-name        (str "chartjs-component-" name)
      :reagent-render      (fn []
-                            [:canvas {:id "rev-chartjs" :width "700" :height "380"}])})) 
+                            [:canvas
+                             {:id (str "rev-chartjs-" name)
+                              :width "700"
+                              :height "380"}])}))

@@ -1,3 +1,7 @@
 {:prod true
  :database-url "jdbc:postgresql://google/grownome?useSSL=false&socketFactoryArg=grownome:us-central1:grownome&user=postgres&password=NUAmudapridpov5&socketFactory=com.google.cloud.sql.postgres.SocketFactory"
+ :oauth-launch-uri  "https://grownome.appspot.com/auth/init"
+ :oauth-redirect-uri "https://grownome.appspot.com/auth/callback"
+ :oauth-logout-uri "https://grownome.appspot.com/auth/logout"
+ :oauth-landing-uri  "https://grownome.appsport.com/"
  :port 3000}
