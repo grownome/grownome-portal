@@ -1,0 +1,6 @@
+steps:
+  - name: 'gcr.io/grownome/lein'
+    args: ['uberjar']
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args: [ 'app', 'deploy']
+  
