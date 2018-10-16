@@ -11,6 +11,7 @@
                  [cljsjs/react-popper "0.10.4-0"]
                  [cljsjs/react-transition-group "2.4.0-0"]
                  [clojure.java-time "0.3.2"]
+                 [clj-time "0.14.0"]
                  [com.cognitect/transit-clj "0.8.313"]
                  [com.fasterxml.jackson.core/jackson-core "2.9.7"]
                  [com.fasterxml.jackson.datatype/jackson-datatype-jdk8 "2.6.3"]
@@ -46,6 +47,7 @@
                  [ring-webjars "0.2.0"]
                  [ring/ring-core "1.7.0"]
                  [ring/ring-defaults "0.3.2"]
+                 [ring/ring-anti-forgery "1.2.0"]
                  [secretary "1.2.3"]
                  [selmer "1.12.1"]]
 

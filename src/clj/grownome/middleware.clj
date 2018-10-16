@@ -16,6 +16,7 @@
             [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]
             [buddy.auth.accessrules :refer [restrict]]
             [buddy.auth :refer [authenticated?]]
+            [clj-time.core :as time]
             [buddy.auth.backends.session :refer [session-backend]])
   (:import
            [org.joda.time ReadableInstant]))
@@ -30,14 +31,17 @@
                      :title "Something very bad has happened!"
                      :message "We've dispatched a team of highly trained gnomes to take care of the problem."})))))
 
+(defn get-custom-token [request]
+  (get-in request [:headers "x-csrf-token"]))
+
+
 (defn wrap-csrf [handler]
-  (wrap-anti-forgery
-    handler
-    {:error-response
-     (error-page
+    (wrap-anti-forgery
+     handler
+     {:error-response
+      (error-page
        {:status 403
         :title "Invalid anti-forgery token"})}))
-
 
 (defn wrap-formats [handler]
   (let [wrapped (-> handler wrap-params (wrap-format formats/instance))]
@@ -47,8 +51,9 @@
       ((if (:websocket? request) handler wrapped) request))))
 
 (defn admin?
-  [{:keys [session] :as req}]
-  (get-in session [:identity :admin]))
+  [{:keys [identity] :as req}]
+  (log/info req)
+  (get-in identity [:admin]))
 
 (def rules
   [{:pattern #"^/devices"
@@ -69,18 +74,19 @@
 (defn wrap-auth [handler]
   (let [backend (session-backend)]
     (-> handler
-        (wrap-access-rules {:rules rules :on-error on-error})
         (wrap-authentication backend)
         (wrap-authorization backend))))
 
 (defn wrap-base [handler]
   (-> ((:middleware defaults) handler)
+    ;  (wrap-access-rules {:rules rules :on-error on-error})
       wrap-auth
       wrap-flash
       (wrap-session {:cookie-attrs {:http-only false}})
       (wrap-defaults
         (-> site-defaults
-            (assoc-in [:security :anti-forgery] true)
+            (assoc-in [:security :anti-forgery] false)
             (dissoc :session)))
-      wrap-internal-error))
+      wrap-internal-error)
+  )
 

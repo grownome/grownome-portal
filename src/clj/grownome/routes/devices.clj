@@ -89,14 +89,14 @@
 
 (defn post-device
   [{:keys [params] :as input}]
-  (let [creation (db/create-device! params)]
+  (let [creation (db/create-device! (db/params->snake params))]
     (response/created "/device/" (str (:id params)))))
 
 (defn devices-routes []
   [""
-   {:middleware [middleware/wrap-csrf
-                 middleware/wrap-formats
-                 middleware/wrap-restricted]}
+   {:middleware [middleware/wrap-formats
+                 middleware/wrap-csrf
+                 ]}
    ["/devices" {:get get-devices}]
    ["/device"  {:get get-device}
     ["/:id/metrics" {:get get-device-metrics}]]

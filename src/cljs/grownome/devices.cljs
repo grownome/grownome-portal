@@ -22,6 +22,7 @@
  (fn [{:keys [db]} [_ devices]]
    {:db (assoc db :devices (into {} (map #(vector (:id %) %) devices)) )}))
 
+
 (kf/reg-chain
  ::post-device
  (fn [_ [ device]]

@@ -38,7 +38,6 @@
         {:last-login (new java.util.Date)
          :is-active true
          :id (:sub auth0-identity)}))
-
       user)
     (do
       (let [is-admin (if (re-find #".*@grownome.com$"

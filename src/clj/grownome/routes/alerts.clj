@@ -47,8 +47,7 @@
 (defn alerts-routes []
   [""
    {:middleware [middleware/wrap-csrf
-                 middleware/wrap-formats
-                 middleware/wrap-restricted]}
+                 middleware/wrap-formats]}
    ["/alert"
     ["/:id"    {:get get-alert
                 :post post-alert}]]
