@@ -56,9 +56,7 @@
                      :height "100%"
                      :style {
                              "transform" "rotate(90deg)"}
-                     :src (get  (nth (:images device) @image-slider-value) :path "test")
-
-                     }])
+                     :src (get  (nth (:images device) @image-slider-value) :path "test")}])
        [b/CardBody {:style {"padding-top" "50px"
                             "overflow" "hidden"}}
         [:div
