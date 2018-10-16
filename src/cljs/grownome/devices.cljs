@@ -49,16 +49,20 @@
         session    @(rf/subscribe [:session])
         image-slider-value (r/atom 0)]
     (fn [id]
-      [b/Card
+      [b/Card  {:style {"overflow"  "hidden"}}
        (when (not-empty  (:images device) )
          [b/CardImg {:top true
                      :width "100%"
+                     :height "100%"
+                     :style {
+                             "transform" "rotate(90deg)"}
                      :src (get  (nth (:images device) @image-slider-value) :path "test")
 
                      }])
-       [b/CardBody
+       [b/CardBody {:style {"padding-top" "50px"
+                            "overflow" "hidden"}}
         [:div
-         [b/CardTitle (:name device)]
+         [b/CardTitle  (:name device) ]
          (when (:admin session)
            [b/CardTitle (:resin-name device)])
          (when (:admin session)
@@ -137,7 +141,7 @@
         (fn [index row]
           [b/Row {:key (str "device-id-row-" index )}
            (for [device-id row]
-             [b/Col {:key (str "device-" device-id) :sm "4"}
+             [b/Col {:key (str "device-" device-id) :style {"padding-top" "10px"} :sm "4"}
               [device-card device-id]])]) rows-of-three)
        (if (:admin session)
          [:div.container {:style {"border" "1px"}}
