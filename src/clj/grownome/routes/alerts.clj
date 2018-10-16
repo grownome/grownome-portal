@@ -13,7 +13,7 @@
 (defn get-alerts
   [{:keys [session] :as req}]
   (let [user-id (get-in session [:identity :id])
-        alerts (db/get-alerts-by-user {:user-id user-id})]
+        alerts (db/get-alerts-by-user {:user_id user-id})]
     (response/ok alerts)))
 
 (defn get-alert

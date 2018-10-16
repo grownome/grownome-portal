@@ -39,6 +39,17 @@
    (keys (:devices db))))
 
 (rf/reg-sub
+ :device-name-ids
+ (fn [db _]
+   (into []
+         (map (fn [[i device]]
+                {:id i
+                 :name  (:name device)})
+              (:devices db)))))
+
+
+
+(rf/reg-sub
  :device
  (fn [db [_ id]]
    (get-in db [:devices id])))

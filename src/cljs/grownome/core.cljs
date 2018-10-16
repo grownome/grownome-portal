@@ -6,6 +6,7 @@
             [re-frame.core :as rf]
             [grownome.profile :as profile]
             [grownome.devices :as devices]
+            [grownome.alerts :as alerts]
             [grownome.device :as device]
             [grownome.metrics :as metrics]
             [grownome.ajax :as ajax]
@@ -44,6 +45,7 @@
             [b/Nav {:class-name "mr-auto" :navbar true}
              [nav-link "Home"    :home]
              [nav-link "Devices" :devices]
+             [nav-link "Alerts"  :alerts]
              [nav-link "About"   :about]
              [b/NavLink  {:href "/auth/out"} "Sign-out"]
              ])]]))))
@@ -99,6 +101,7 @@
     :home [home-page]
     :about [about-page]
     :devices [devices/devices-page]
+    :alerts   [alerts/alerts-page]
     :profile  [profile/profile-page]
     :metrics  [metrics/metrics-page]
     nil [:div ""]]])

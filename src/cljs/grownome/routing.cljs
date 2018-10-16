@@ -12,6 +12,7 @@
   [["/" :home]
    ["/about" :about]
    ["/profile" :profile]
+   ["/alerts" :alerts]
    ["/devices" :devices]
    ["/device/:id/metrics" :metrics]
    ["/user/:id" :user]])

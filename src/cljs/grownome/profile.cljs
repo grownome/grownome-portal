@@ -15,9 +15,9 @@
             [grownome.routing :as routing]))
 
 (kf/reg-controller
- ::devices-controller
+ ::profile-controller
  {:params (constantly true)
-  :start  [::load-devices-page]})
+  :start  [::load-profile-page]})
 
 (kf/reg-chain
  ::load-profile-page
@@ -25,8 +25,8 @@
    {:http {:method      :get
            :url         "/profile"
            :error-event [:common/set-error]}})
- (fn [{:keys [db]} [_ devices]]
-   {:db (assoc db :devices devices)}))
+ (fn [{:keys [db]} [_ profile]]
+   {:db (assoc db :profile profile)}))
 
 (defn profile-page []
   [:div.container
