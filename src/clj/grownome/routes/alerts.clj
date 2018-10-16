@@ -48,9 +48,8 @@
   [""
    {:middleware [middleware/wrap-csrf
                  middleware/wrap-formats]}
-   ["/alert"
-    ["/:id"    {:get get-alert
-                :post post-alert}]]
+   ["/alert"   {:post post-alert}
+    ["/:id"    {:get get-alert}]]
    ["/alerts"  {:get get-alerts}]
    ["/admin"
     ["/alert"  {:post post-alert-admin}]

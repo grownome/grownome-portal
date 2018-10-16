@@ -50,7 +50,11 @@
   [id]
   (let [alert @(rf/subscribe [:alert id])
         session    @(rf/subscribe [:session])]
-    [:div "its an alert"]))
+    [:div
+     (:device-id alert) "will alert if"
+     (:metric-name alert) "is"
+     (:condition alert)
+     (:threshold alert)]))
 
 (defn new-alert []
   (let [alert (atom {})
