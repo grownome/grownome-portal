@@ -7,7 +7,6 @@
             [grownome.profile :as profile]
             [grownome.devices :as devices]
             [grownome.alerts :as alerts]
-            [grownome.device :as device]
             [grownome.metrics :as metrics]
             [grownome.ajax :as ajax]
             [grownome.routing :as routing])
@@ -45,7 +44,7 @@
             [b/Nav {:class-name "mr-auto" :navbar true}
              [nav-link "Home"    :home]
              [nav-link "Devices" :devices]
-             [nav-link "Alerts"  :alerts]
+             (when (:admin @session ) [nav-link "Alerts"  :alerts])
              [nav-link "About"   :about]
              [b/NavLink  {:href "/auth/out"} "Sign-out"]
              ])]]))))

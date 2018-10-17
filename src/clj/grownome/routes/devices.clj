@@ -98,8 +98,8 @@
                  middleware/wrap-csrf
                  ]}
    ["/devices" {:get get-devices}]
-   ["/device"  {:get get-device}
-    ["/:id/metrics" {:get get-device-metrics}]]
+   ["/device/:id"  {:get get-device}
+    ["/metrics" {:get get-device-metrics}]]
    ["/admin"
     ["/device" {:post post-device
                 :get  get-device-admin}]]

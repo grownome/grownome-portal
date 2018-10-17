@@ -57,8 +57,8 @@
   [id metric-name]
   (let [device     @(rf/subscribe [:device id])
         session    @(rf/subscribe [:session])
-        metrics    (get-metric-from-device device metric-name)
-        labels     (get-label-from-device device metric-name)]
+        metrics    (reverse (get-metric-from-device device metric-name))
+        labels     (reverse (get-label-from-device device metric-name))]
     (fn [id]
       [b/Card
        [b/CardTitle

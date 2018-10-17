@@ -130,31 +130,31 @@ VALUES (:device_id,
 DELETE FROM alerts
  WHERE id = :id;
 
--- :name get-alerts-by-user :? :n
+-- :name get-alerts-by-user :? :*
 -- :doc given a user gets all alerts
 SELECT *
   FROM alerts
  WHERE user_id = :user_id;
 
--- :name get-alerts-by-device-and-user :? :n
+-- :name get-alerts-by-device-and-user :? :*
 -- :doc given a user-id and device-id gets all alerts
 SELECT *
   FROM alerts
  WHERE device_id = :device_id, user_id = :user_id;
 
--- :name get-alerts-by-device :? :n
+-- :name get-alerts-by-device :? :*
 -- :doc given a device-id gets all alerts
 SELECT *
   FROM alerts
  WHERE device_id = :device_id;
 
--- :name get-alert
+-- :name get-alert :? :1
 -- :doc get an alert by alert id
 SELECT *
   FROM alerts
  WHERE id = :id;
 
--- :name get-all-alerts
+-- :name get-all-alerts :? :*
 -- :doc admin method to get all allerts
 SELECT *
   FROM alerts;

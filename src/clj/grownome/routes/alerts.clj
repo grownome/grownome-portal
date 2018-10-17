@@ -13,7 +13,7 @@
 (defn get-alerts
   [{:keys [session] :as req}]
   (let [user-id (get-in session [:identity :id])
-        alerts (db/get-alerts-by-user {:user_id user-id})]
+        alerts (db/get-alerts-by-user (db/params->snake {:user-id user-id}))]
     (response/ok alerts)))
 
 (defn get-alert
@@ -26,20 +26,41 @@
       (response/not-found))))
 
 (defn get-alerts-admin
-  []
+  [req]
   (let [alerts (db/get-all-alerts)]
     (response/ok alerts)))
 
+(def conditions
+  {"above" #(-> %
+                (assoc :above true)
+                (dissoc :condition)
+                (assoc :below false))
+   "below" #(-> %
+                (assoc :below true)
+                (dissoc :condition)
+                (assoc :above false))})
+
+(defn set-condition
+  [alert]
+  (let [res
+        ((conditions (:condition alert))
+         alert)]
+    res))
+
 (defn post-alert
-  [{:keys [params session] :as input}]
+  [{:keys [params session] :as req}]
   (let [user-id  (get-in session [:identity :id])
         params   (assoc params :user-id user-id)
-        creation (db/create-alert! params)]
+        params   (update params :device-id read-string)
+        params   (update params :threshold read-string)
+        ;get rid of condition value after setting the corrisponding column
+        params   (set-condition params)
+        creation (db/create-alert! (db/params->snake params))]
     (response/created "/alert/" (str (:id creation)))))
 
 (defn post-alert-admin
   [{:keys [params session] :as input}]
-  (let [creation (db/create-alert! params)]
+  (let [creation (db/create-alert! (db/params->snake  params))]
     (response/created "/alert/" (str (:id creation)))))
 
 
@@ -48,10 +69,10 @@
   [""
    {:middleware [middleware/wrap-csrf
                  middleware/wrap-formats]}
-   ["/alert"   {:post post-alert}
-    ["/:id"    {:get get-alert}]]
-   ["/alerts"  {:get get-alerts}]
+   ["/alerts"  {:get get-alerts
+                :post post-alert}]
+   ["/alert/:id" {:get get-alert}]
    ["/admin"
-    ["/alert"  {:post post-alert-admin}]
-    ["/alerts" {:get  get-alerts-admin}]]])
+    ["/alerts" {:get  get-alerts-admin
+                :post post-alert-admin}]]])
 
