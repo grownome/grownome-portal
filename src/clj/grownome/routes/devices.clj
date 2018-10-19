@@ -6,6 +6,8 @@
    [clojure.string :as strings]
    [grownome.middleware :as middleware]
    [clojure.tools.logging :as log]
+   [clj-time.jdbc]
+
    [java-time :as jt]
    [ring.util.http-response :as response]))
 
@@ -52,9 +54,7 @@
 
 (defn fix-metrics-dates
   [metric]
-  (update metric
-          :timestamp
-          (fn [v] (jt/format "MM/dd hh:mm" v))))
+  metric)
 
 (def metric-fixer (comp fix-metrics-dates fix-metrics-values))
 

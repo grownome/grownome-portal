@@ -182,3 +182,15 @@ UPDATE alerts
             description = :description
  WHERE
    id = :id AND user_id = :user_id;
+
+-- :name get-metrics-summary :? :*
+-- :doc gets summary of all device metrics with an :interval in the last :limit
+SELECT DISTINCT AVG(humidity) humidity,
+                AVG(temperature) temperature,
+                device_id,
+                to_timestamp(floor((extract('epoch' from timestamp) / :interval)) * :interval) AT TIME ZONE 'UTC' as interval_alias
+  FROM metrics
+
+ WHERE timestamp > :limit
+ GROUP BY interval_alias,device_id
+ ORDER BY interval_alias DESC

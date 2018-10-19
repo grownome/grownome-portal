@@ -8,6 +8,7 @@
                  [ring-oauth2 "0.1.4"]
                  [clj-oauth "1.5.5"]
                  [cljs-ajax "0.7.4"]
+                 [com.andrewmcveigh/cljs-time "0.5.2"]
                  [cljsjs/react-popper "0.10.4-0"]
                  [cljsjs/react-transition-group "2.4.0-0"]
                  [clojure.java-time "0.3.2"]

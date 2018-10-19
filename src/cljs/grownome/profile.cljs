@@ -12,6 +12,7 @@
             [reagent.core :as r]
             [re-frame.core :as rf]
             [grownome.ajax :as ajax]
+            [grownome.analytics.mixpanel :as mix]
             [grownome.routing :as routing]))
 
 (kf/reg-controller
@@ -26,7 +27,24 @@
            :url         "/profile"
            :error-event [:common/set-error]}})
  (fn [{:keys [db]} [_ profile]]
-   {:db (assoc db :profile profile)}))
+   (when (not (=  (:profile db) profile))
+     (js/console.log "time to update")
+     (js/console.log profile)
+     (mix/identify (:id profile))
+     (mix/name-tag (:email profile))
+     (mix/set-people-props
+      {"$name"  (:email profile)
+       "$email" (:email profile)
+       "admin"  (or (:admin profile) false)}
+      ))
+   {})
+ (fn [{:keys [db]} [_ profile _ ]]
+   (js/console.log "debuging profile")
+   (js/console.log profile)
+   {:db (assoc db :profile profile)})
+
+
+ )
 
 (defn profile-page []
   [:div.container

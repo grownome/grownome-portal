@@ -16,16 +16,18 @@
 (kf/reg-chain
  ::load-devices-page
  (fn [_ _]
-   {:http {:method      :get
+   {:dispatch [:set-loading :devices]
+    :http {:method      :get
            :url         "/devices"
            :error-event [:common/set-error]}})
  (fn [{:keys [db]} [_ devices]]
-   {:db (assoc db :devices (into {} (map #(vector (:id %) %) devices)) )}))
+   {:dispatch [:unset-loading :devices]
+    :db (assoc db :devices (into {} (map #(vector (:id %) %) devices)) )}))
 
 
 (kf/reg-chain
  ::post-device
- (fn [_ [ device]]
+ (fn [_ [device]]
    {:http {:method      :post
            :url         "/admin/device"
            :ajax-map {:params device}
@@ -69,7 +71,7 @@
                      :style {
                              "transform" "rotate(90deg)"}
                      :src (get  (nth (:images device) @image-slider-value) :path "test")}])
-       [b/CardBody {:style {"padding-top" "50px"
+       [b/CardBody {:style {"paddingTop" "50px"
                             "overflow" "hidden"}}
         [:div
          [b/CardTitle  (:name device) ]
@@ -151,7 +153,7 @@
         (fn [index row]
           [b/Row {:key (str "device-id-row-" index )}
            (for [device-id row]
-             [b/Col {:key (str "device-" device-id) :style {"padding-top" "10px"} :sm "4"}
+             [b/Col {:key (str "device-" device-id) :style {"paddingTop" "10px"} :sm "4"}
               [device-card device-id]])]) rows-of-three)
        (if (:admin session)
          [:div.container {:style {"border" "1px"}}

@@ -5,6 +5,7 @@
             [reagent.core :as r]
             [cognitect.transit :as t]
             [re-frame.core :as rf]
+            [grownome.datetime :as datetime]
             [grownome.chart :as chart]
             [grownome.ajax :as ajax]
             [grownome.routing :as routing]))
@@ -20,17 +21,18 @@
 (kf/reg-chain
  ::load-device-metrics-page
  (fn [{:keys [db]} [device-id]]
-   {:db (assoc db :loading-metrics true)
+   {:dispatch [:set-loading :metrics]
     :http {:method      :get
            :url         (str "/device/" device-id "/metrics")
            :error-event [:common/set-error]}})
  (fn [{:keys [db]} [_ metrics]]
    {:db
     (-> db
-        (assoc-in [:loading-metrics] false)
         (assoc-in [:focused-device ] (:id metrics))
         (assoc-in [:devices (:id metrics) :metrics]
-                  (:metrics metrics)))}))
+                  (:metrics metrics)))})
+ (fn [_ _]
+   {:dispatch [:unset-loading :metrics]}))
 
 (rf/reg-sub
  :focused-device
@@ -40,7 +42,7 @@
 (rf/reg-sub
  :loading-metrics
  (fn [db _]
-   (get-in db [:loading-metrics])))
+   (get-in db [:loading :metrics] false)))
 
 
 
@@ -51,32 +53,42 @@
 
 (defn get-label-from-device
   [device metric-name ]
-   (into [] (map :timestamp (get-in device [:metrics metric-name]))))
+  (let [v 
+        (into [] (map (fn [metric]
+                        (datetime/medium-datetime   (cljs-time.core/from-utc-time-zone (:timestamp metric)))) (get-in device [:metrics metric-name])))]
+
+    (js/console.log v)
+    v
+    ))
 
 (defn device-metrics-card
   [id metric-name]
-  (let [device     @(rf/subscribe [:device id])
+  (let [device     (rf/subscribe [:device id])
         session    @(rf/subscribe [:session])
-        metrics    (reverse (get-metric-from-device device metric-name))
-        labels     (reverse (get-label-from-device device metric-name))]
+        ]
     (fn [id]
-      [b/Card
-       [b/CardTitle
-        [chart/chart labels metric-name metrics]]
-       [b/CardBody
-        [:div
-         [b/CardTitle (:name device)]
-         (when (:admin session)
-           [b/CardTitle (:resin_name device)])
-         (when (:admin session)
-           [b/CardTitle (:id device)])]]])))
+      (js/console.log @device)
+      (r/with-let [metrics    (reverse (get-metric-from-device @device metric-name))
+                   labels     (reverse (get-label-from-device @device metric-name))]
+        [b/Card
+         [b/CardTitle
+          [chart/chart labels metric-name metrics]]
+         [b/CardBody
+          [:div
+           [b/CardTitle  (:name device) ]
+           (when (:admin session)
+             [b/CardTitle (:resin_name device)])
+           (when (:admin session)
+             [b/CardTitle (:id device)])]]]))))
 
 (defn metrics-page []
-  (let [device-id @(rf/subscribe [:focused-device])
-        loading   @(rf/subscribe [:loading-metrics])
-        session   @(rf/subscribe [:session])]
-    (when (and (not loading) (:email session) )
-      [b/Container
-       [device-metrics-card device-id "temperature"]
-       [device-metrics-card device-id "humidity"]])))
+  (let [device-id (rf/subscribe [:focused-device])
+        loading   (rf/subscribe [:loading-metrics])
+        session   (rf/subscribe [:session])]
+    (fn []
+      (when (and (not @loading) (:email @session))
+        [b/Container
+         [device-metrics-card @device-id "temperature"]
+         [:div {:style {"paddingTop" "10px"}}]
+         [device-metrics-card @device-id "humidity"]]))))
 

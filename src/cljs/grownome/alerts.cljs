@@ -64,17 +64,13 @@
         (:threshold @alert)]])))
 
 (defn new-alert []
-  (let [
-        ds (rf/subscribe [:device-name-ids])
-        
-        ]
-
+  (let [ds (rf/subscribe [:device-name-ids])]
     (fn []
       (r/with-let [ds @ds
                    alert (r/atom {:device-id (:id (first ds))
                                  :metric-name "temperature"
                                  :condition "above"
-                                 })] 
+                                 })]
         (js/console.log (first ds))
         [:div.container
          [:div.row>div.col-sm-12
