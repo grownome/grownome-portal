@@ -52,11 +52,7 @@
           (keyword (:metric-name metric))
           (fn [v] (.floatValue v))))
 
-(defn fix-metrics-dates
-  [metric]
-  metric)
-
-(def metric-fixer (comp fix-metrics-dates fix-metrics-values))
+(def metric-fixer  fix-metrics-values)
 
 (defn get-device-metrics
   [{:keys [path-params] :as req}]

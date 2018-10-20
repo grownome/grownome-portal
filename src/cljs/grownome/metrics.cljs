@@ -3,9 +3,11 @@
             [kee-frame.core :as kf]
             [markdown.core :refer [md->html]]
             [reagent.core :as r]
+            [goog.string]
             [cognitect.transit :as t]
             [re-frame.core :as rf]
             [grownome.datetime :as datetime]
+            [goog.date.UtcDateTime :as dates]
             [grownome.chart :as chart]
             [grownome.ajax :as ajax]
             [grownome.routing :as routing]))
@@ -53,9 +55,17 @@
 
 (defn get-label-from-device
   [device metric-name ]
-  (let [v 
+  (let [v
         (into [] (map (fn [metric]
-                        (datetime/medium-datetime   (cljs-time.core/from-utc-time-zone (:timestamp metric)))) (get-in device [:metrics metric-name])))]
+                        (when (:timestamp metric)
+                          (datetime/short-datetime
+                           (cljs-time.core/minus
+                            (js/goog.date.UtcDateTime.
+                             (clj->js  (:timestamp metric)))
+                            ; this hack will haunt us
+                            (cljs-time.core/hours 8)
+                            ))))
+                      (get-in device [:metrics metric-name])))]
 
     (js/console.log v)
     v
