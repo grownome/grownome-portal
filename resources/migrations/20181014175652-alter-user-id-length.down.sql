@@ -1,2 +1,2 @@
 ALTER TABLE users
-  ALTER COLUMN id TYPE varchar(20)
+  ALTER COLUMN id TYPE varchar(50)
