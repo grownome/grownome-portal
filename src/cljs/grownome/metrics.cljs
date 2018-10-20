@@ -59,12 +59,8 @@
         (into [] (map (fn [metric]
                         (when (:timestamp metric)
                           (datetime/short-datetime
-                           (cljs-time.core/minus
                             (js/goog.date.UtcDateTime.
-                             (clj->js  (:timestamp metric)))
-                            ; this hack will haunt us
-                            (cljs-time.core/hours 8)
-                            ))))
+                             (clj->js  (:timestamp metric))))))
                       (get-in device [:metrics metric-name])))]
 
     (js/console.log v)

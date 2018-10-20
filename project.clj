@@ -87,11 +87,8 @@
                  :optimizations :advanced
                  :pretty-print false
                  :infer-externs true
-                 :closure-warnings
-                 {:externs-validation :off :non-standard-jsdoc :off}
+                 :closure-warnings {:externs-validation :off :non-standard-jsdoc :off}
                  :externs ["react/externs/react.js"]}}}}
-             
-             
              :aot :all
              :uberjar-name "grownome.jar"
              :source-paths ["env/prod/clj"]
