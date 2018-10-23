@@ -5,6 +5,7 @@
    [clojure.java.io :as io]
    [clojure.string :as strings]
    [grownome.middleware :as middleware]
+   [grownome.utils.google-auth :as ga]
    [clojure.tools.logging :as log]
    [clj-time.jdbc]
 
@@ -82,6 +83,9 @@
       (response/ok device)
       (response/not-found))))
 
+(defn get-predict
+  [{:keys [params] :as input}]
+  (response/ok (ga/get-image-prediction (:url params))))
 
 (defn post-device
   [{:keys [params] :as input}]
@@ -93,6 +97,7 @@
    {:middleware [middleware/wrap-formats
                  middleware/wrap-csrf
                  ]}
+   ["/predict" {:get get-predict}]
    ["/devices" {:get get-devices}]
    ["/device/:id"  {:get get-device}
     ["/metrics" {:get get-device-metrics}]]

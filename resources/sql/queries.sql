@@ -28,6 +28,20 @@ SELECT * FROM metrics
  ORDER BY timestamp DESC
  LIMIT 5000;
 
+-- :name get-metrics-summary-by-device :? :*
+-- :doc gets summary of all device metrics with an :interval in the last :limit
+SELECT DISTINCT AVG(humidity) humidity,
+                AVG(temperature) temperature,
+                device_id,
+                to_timestamp(floor((extract('epoch' from timestamp) / :interval)) * :interval) AT TIME ZONE 'UTC' as interval_alias
+  FROM metrics
+ WHERE device_id = :device_id
+   AND timestamp > :limit
+                      AND ( metric_name = "temperature"
+                           OR metric_name = "humidity" )
+ GROUP BY interval_alias,device_id
+ ORDER BY interval_alias DESC
+
 
 -- :name get-images-by-device :? :*
 -- :doc  gets all of the images for a device
