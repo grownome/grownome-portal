@@ -15,8 +15,10 @@
                  [clojure.java-time "0.3.2"]
                  [clj-time "0.14.0"]
                  [com.cognitect/transit-clj "0.8.313"]
-                 [com.google.auth/google-auth-library-oauth2-http "0.11.0"]
-                 [com.google.auth/google-auth-library-credentials "0.11.0"]
+                 [com.google.auth/google-auth-library-oauth2-http "0.11.0"
+                  :exclusions [com.google.guava/guava ]]
+                 [com.google.auth/google-auth-library-credentials "0.11.0"
+                  :exclusions [com.google.guava/guava ]]
                  [com.fasterxml.jackson.core/jackson-core "2.9.7"]
                  [com.fasterxml.jackson.datatype/jackson-datatype-jdk8 "2.6.3"]
                  [conman "0.8.2"]

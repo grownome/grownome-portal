@@ -1,9 +1,7 @@
 (ns grownome.validation
   (:require
    #?(:clj [clojure.spec.alpha :as s]
-      :cljs [cljs.spec.alpha :as s])
-   #?(:clj [clojure.spec.test.alpha :as st]
-      :cljs [cljs.spec.test.alpha :as sst])))
+      :cljs [cljs.spec.alpha :as s])))
 
 (s/def :device/id         integer?)
 (s/def :device/name       string?)
