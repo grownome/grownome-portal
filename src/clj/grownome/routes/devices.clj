@@ -83,9 +83,11 @@
       (response/ok device)
       (response/not-found))))
 
+(defn -get-prediction  [url] (ga/get-image-prediction url))
+
 (defn get-predict
   [{:keys [params] :as input}]
-  (response/ok (ga/get-image-prediction (:url params))))
+  (response/ok (-get-prediction (:url params))))
 
 (defn post-device
   [{:keys [params] :as input}]
