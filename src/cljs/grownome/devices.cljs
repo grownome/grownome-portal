@@ -40,7 +40,7 @@
  (fn [_ [image-url]]
    {:http {:method      :get
            :url         "/predict"
-           :ajax-map {:url image-url}
+           :ajax-map {:params  {:url image-url}}
            :error-event [:common/set-error]}})
  (fn [{:keys [db]} [_ prediction]]
    {:db (assoc-in db [:predictions (:url prediction)] prediction)}))
@@ -97,7 +97,9 @@
            [b/CardTitle (:resin-name device)])
          (when (:admin session)
            [b/CardTitle (:id device)])
-         [:div (str "created on: " (get  (nth (:images device) @image-slider-value) :created-on)) ]
+         (when (not-empty (:images device))
+           [:div (str "created on: "
+                      (get  (nth (:images device) @image-slider-value) :created-on)) ])
          [:div "time slider"]
 
          [b/Input {:type "range"
@@ -107,19 +109,16 @@
                    :max (dec (count (:images device)))}]
          [b/Button {:href (kf/path-for
                            [:metrics {:id (:id device)}])} "metrics" ]
-         (when (:admin session)
-           [:div (get @predictions
-                      (get
-                       (nth (:images device)
-                            @image-slider-value) :path)) ])
          [:div (str "total image count: " (count (:images device)))]
          " "
          (when (:admin session)
            [b/Button {:on-click
-                      #(rf/dispatch [::get-prediction
-                                     (get
-                                      (nth (:images device)
-                                           @image-slider-value) :path)])}
+                      (fn []
+                        (let [slider (get (nth (:images device) @image-slider-value) :path)]
+                          (js/console.log slider)
+                          (rf/dispatch [::get-prediction
+                                        slider
+                                        ])))}
             "Predict Health"])
          " "
          [b/Button "Images"]

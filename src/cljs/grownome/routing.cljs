@@ -13,6 +13,7 @@
    ["/about" :about]
    ["/profile" :profile]
    ["/alerts" :alerts]
+   ["/owners" :owners]
    ["/devices" :devices]
    ["/device/:id/metrics" :metrics]
    ["/user/:id" :user]])

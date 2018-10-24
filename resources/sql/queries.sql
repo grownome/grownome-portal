@@ -13,6 +13,7 @@ SELECT * FROM devices;
 SELECT * FROM devices
 WHERE id = :id;
 
+
 -- :name get-devices-by-user :? :*
 -- :doc gets all devices
 SELECT d.id, d.name, d.resin_name, d.short_link, d.created_on
@@ -74,6 +75,11 @@ SELECT * FROM timelapses
 INSERT INTO
   owners(user_id,device_id,created_on)
 VALUES(:user_id,:device_id,:created_on);
+
+-- :name get-owners :? :*
+-- :doc gets all owners
+SELECT * FROM owners;
+
 
 -- :name get-user-devices :? :*
 -- :doc  gets all of the devices a user own
