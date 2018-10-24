@@ -47,7 +47,6 @@
              [nav-link "Home"    :home]
              [nav-link "Devices" :devices]
              (when (:admin @session ) [nav-link "Owners"  :owners])
-
              (when (:admin @session ) [nav-link "Alerts"  :alerts])
              [nav-link "About"   :about]
              [b/NavLink  {:href "/auth/out"} "Sign-out"]])]]))))
