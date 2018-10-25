@@ -1,4 +1,4 @@
-FROM java:8-alpine
+FROM java:latest
 MAINTAINER Eric Fode <you@example.com>
 
 ADD target/uberjar/grownome.jar /grownome/app.jar

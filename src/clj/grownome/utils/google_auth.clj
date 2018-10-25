@@ -1,9 +1,15 @@
 (ns grownome.utils.google-auth
   (:require [clj-http.client :as client]
             [clojure.data.codec.base64 :refer [encode]]
-            )
-  (:import [com.google.auth.oauth2.GoogleCredentials]))
-
+            [clojure.java [io :as io]]
+            [cheshire.core :as json])
+  (:import
+   [com.google.protobuf  ByteString]
+   [com.google.cloud.automl.v1beta1
+    ModelName
+    Image
+    ExamplePayload
+    PredictionServiceClient]))
 
 (defn predict-request
   [image-bytes]
@@ -13,17 +19,22 @@
 
 (defn get-image-prediction
   [image-url]
-  (let [
-        appCreds (com.google.auth.oauth2.GoogleCredentials/getApplicationDefault)
-        image-bytes (encode (.getBytes (:body (client/get image-url))))
-        request (predict-request image-bytes)]
-    (.refreshIfExpired appCreds)
-    (:body
-     (client/post
-      "https://automl.googleapis.com/v1beta1/projects/grownome/locations/us-central1/models/ICN2981125424368801813:predict"
-      {:headers {
-                 "Content-Type" "Application/json"
-                 "Authorization"
-                 (str "Bearer " (.getTokenValue (.getAccessToken appCreds)))}
-       :body (str "{\"payload\": {\"image\": {\"imageBytes\":\"" (String. image-bytes) "\"}}}")}))))
-
+  (let [model   (ModelName/of "grownome" "us-central1" "ICN2981125424368801813")
+        predictor (PredictionServiceClient/create)
+        image-bytes  (.build
+                      (.setImageBytes
+                       (Image/newBuilder)
+                       (ByteString/copyFrom (:body  (client/get image-url {:as :byte-array})))))
+        payload (.build
+                 (.setImage
+                  (ExamplePayload/newBuilder)
+                  image-bytes))
+        resp (.getPayloadList (.predict predictor
+                                        ^ModelName model
+                                        ^ExamplePayload payload
+                                        ^java.utilMap (java.util.HashMap.)))
+        labels (map (fn [annotation]
+                      {:label (.getDisplayName annotation)
+                       :score (.getScore (.getClassification annotation))}) resp)]
+    {:url image-url
+     :labels labels}))

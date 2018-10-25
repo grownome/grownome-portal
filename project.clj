@@ -21,6 +21,8 @@
                   :exclusions [com.google.guava/guava ]]
                  [com.fasterxml.jackson.core/jackson-core "2.9.7"]
                  [com.fasterxml.jackson.datatype/jackson-datatype-jdk8 "2.6.3"]
+                 [com.google.cloud/google-cloud-automl "0.55.1-beta"
+                  :exclusions [com.google.guava/guava ]]
                  [conman "0.8.2"]
                  [cprop "0.1.13"]
                  [funcool/struct "1.3.0"]
@@ -34,6 +36,7 @@
                  [metosin/muuntaja "0.6.1"]
                  [metosin/reitit "0.2.3"]
                  [camel-snake-kebab "0.4.0"]
+                 [cheshire "5.8.1"]
                  [clj-http "3.9.1"]
                  [metosin/ring-http-response "0.9.0"]
                  [mount "0.1.13"]

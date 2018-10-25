@@ -78,7 +78,7 @@
   [id]
   (let [device     @(rf/subscribe [:device id])
         session    @(rf/subscribe [:session])
-        predictions @(rf/subscribe [:predictions])
+        predictions (rf/subscribe [:predictions])
         image-slider-value (r/atom 0)]
     (fn [id]
       [b/Card  {:style {"overflow"  "hidden"}}
@@ -114,12 +114,35 @@
          (when (:admin session)
            [b/Button {:on-click
                       (fn []
-                        (let [slider (get (nth (:images device) @image-slider-value) :path)]
-                          (js/console.log slider)
+                        (let [slider
+                              (get (nth
+                                    (:images device)
+                                    @image-slider-value) :path)]
                           (rf/dispatch [::get-prediction
                                         slider
                                         ])))}
             "Predict Health"])
+         " "
+         (when (:admin session)
+           (when-let  [prediction (get @predictions
+                                       (get (nth
+                                             (:images device)
+                                             @image-slider-value) :path))]
+             [:div "something should be here"]
+             [b/CardBody 
+              [:div { }
+               (map (fn [p]
+                      [:div {:key
+                             (str (:id device) "-" (:label p) "pred")}
+                       [b/CardBody (:label p)]
+                       [b/Progress {:value (* 100 (:score p))
+                                    :key (str (:id device) "-" (:label p) "prod")}
+                        (:score p)
+                        " "
+                        ]]
+
+                      )
+                    (:labels prediction))]]))
          " "
          [b/Button "Images"]
          " "

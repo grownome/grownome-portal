@@ -7,16 +7,16 @@
    [grownome.middleware :as middleware]
    [clojure.tools.logging :as log]
    [java-time :as jt]
-   [ring.util.http-response :as response])
-  )
+   [ring.util.http-response :as response]))
 
 (defn post-owner-admin
   [{:keys [params session] :as req}]
   (let [email (:email params)
         device-id (:device-id params)
         user (db/get-user-by-email {:email email})
-        device (db/get-device {:id device-id})]
-    (if (and device user)
+                                        ;device (db/get-device {:id (read-string device-id)})
+        ]
+    (if (and device-id user)
       (let [db-req (db/add-owner!
                     {:device_id device-id
                      :user_id (:id user)
@@ -24,7 +24,7 @@
         (if (= 1 db-req)
           (response/ok)
           (response/internal-server-error)))
-      (response/not-found {:device device :user user}))))
+      (response/not-found {:device device-id :user user}))))
 
 (defn owners-admin
   [_]
