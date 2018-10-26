@@ -11,7 +11,7 @@
  ; set your dev database connection URL here
 
  ;prod
-; :database-url "jdbc:postgresql://google/grownome?useSSL=false&socketFactoryArg=grownome:us-central1:grownome&user=postgres&password=NUAmudapridpov5&socketFactory=com.google.cloud.sql.postgres.SocketFactory"
+ :database-url "jdbc:postgresql://google/grownome?useSSL=false&socketFactoryArg=grownome:us-central1:grownome&user=postgres&password=NUAmudapridpov5&socketFactory=com.google.cloud.sql.postgres.SocketFactory"
  ;dev
- :database-url "jdbc:postgresql://google/grownome?useSSL=false&socketFactoryArg=grownome:us-west1:grownome-dev&user=postgres&password=f0dvvfAhDNbcjrKK&socketFactory=com.google.cloud.sql.postgres.SocketFactory"
+; :database-url "jdbc:postgresql://google/grownome?useSSL=false&socketFactoryArg=grownome:us-west1:grownome-dev&user=postgres&password=f0dvvfAhDNbcjrKK&socketFactory=com.google.cloud.sql.postgres.SocketFactory"
 }

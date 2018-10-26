@@ -22,9 +22,15 @@
                            :datasets [{:label name
                                        :fill false
                                        :showLine true
+                                       :borderJoinStyle "round"
+                                       :borderWidth 0.5
+                                       :radius 1
+                                       :hitRadius 3
                                        :borderColor "#F08080"
+                                       :tension 1
                                        :data metric}
-                                      ]}}]
+                                      ]
+                           }}]
       (js/Chart. context (clj->js chart-data))))
 
 (defn chart
