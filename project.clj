@@ -102,7 +102,7 @@
    :dev           [:project/dev :profiles/dev]
    :test          [:project/dev :project/test :profiles/test]
 
-   :project/dev  {:jvm-opts ["-Dconf=dev-config.edn" "--add-modules" "java.xml.bind"]
+   :project/dev  {:jvm-opts ["-Dconf=dev-config.edn" "--illegal-access=permit"]
                   :dependencies [[binaryage/devtools "0.9.10"]
                                  [cider/piggieback "0.3.9"]
                                  [day8.re-frame/re-frame-10x "0.3.3-react16"]
@@ -140,7 +140,7 @@
                   :repl-options {:init-ns user}
                   :injections [(require 'pjstadig.humane-test-output)
                                (pjstadig.humane-test-output/activate!)]}
-   :project/test {:jvm-opts ["-Dconf=test-config.edn" "--add-modules" "java.xml.bind"]
+   :project/test {:jvm-opts ["-Dconf=test-config.edn""--illegal-access=permit"]
                   :resource-paths ["env/test/resources"]
                   :cljsbuild
                   {:builds
