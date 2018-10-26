@@ -33,9 +33,9 @@
       (r/with-let [expanded? (r/atom true)
                    ]
         [b/Navbar {:light true
-                   :class-name "navbar-dark bg-primary"
+                   :class-name "navbar-dark bg-dark"
                    :expand "md"}
-         [b/NavbarBrand {:href "/"} "grownome"]
+         [b/NavbarBrand {:href "/"} [:img {:src "/img/Logo_small_green.png"}]]
          [b/NavbarToggler {:on-click #(swap! expanded? not)}]
          [b/Collapse {:is-open @expanded? :navbar true}
           (if (nil? (:email @session))
@@ -99,7 +99,7 @@
         [:div.loading]
         (for [l @loading]
           [b/Alert
-           {:color "primary"}
+           {:color "dark"}
            (str "loading " )l]))])))
 
 (defn about-page []
@@ -120,7 +120,7 @@
 (defn home-page []
   [:div.container
    [:div.row>div.col-sm-12
-    [:h2.alert.alert-info "Welcome to grownome check out your devices"]]
+    [:h2.alert.alert-dark "Welcome to Grownome"]]
    (when-let [docs @(rf/subscribe [:docs])]
      [:div.row>div.col-sm-12
       [:div ]])])
