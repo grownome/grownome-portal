@@ -3,5 +3,6 @@ steps:
     args: ['uberjar']
   - name: 'gcr.io/cloud-builders/gcloud'
     args: [ 'app', 'deploy', '-q']
-    timeout: 600s
+    timeout: 1000s
+timeout: 1600s
   
