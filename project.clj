@@ -36,6 +36,7 @@
                  [metosin/muuntaja "0.6.1"]
                  [metosin/reitit "0.2.3"]
                  [camel-snake-kebab "0.4.0"]
+                 [cljsjs/photoswipe "4.1.1-0"]
                  [cheshire "5.8.1"]
                  [clj-http "3.9.1"]
                  [metosin/ring-http-response "0.9.0"]

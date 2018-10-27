@@ -19,7 +19,7 @@
 
 (defn get-image-prediction
   [image-url]
-  (let [model   (ModelName/of "grownome" "us-central1" "ICN2981125424368801813")
+  (let [model   (ModelName/of "grownome" "us-central1" "ICN7183764474690524970")
         predictor (PredictionServiceClient/create)
         image-bytes  (.build
                       (.setImageBytes

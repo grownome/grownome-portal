@@ -73,7 +73,6 @@
  (fn [db [_]]
    (get-in db [:predictions])))
 
-
 (defn device-card
   [id]
   (let [device     @(rf/subscribe [:device id])
@@ -82,12 +81,12 @@
         image-slider-value (r/atom 0)]
     (fn [id]
       [b/Card  {:style {"overflow"  "hidden"}}
+
        (when (not-empty  (:images device) )
          [b/CardImg {:top true
                      :width "100%"
                      :height "100%"
-                     :style {
-                             "transform" "rotate(90deg)"}
+                     :style {"transform" "rotate(90deg)"}
                      :src (get  (nth (:images device) @image-slider-value) :path "test")}])
        [b/CardBody {:style {"paddingTop" "50px"
                             "overflow" "hidden"}}
@@ -121,7 +120,7 @@
                           (rf/dispatch [::get-prediction
                                         slider
                                         ])))}
-            "Predict Health"])
+            "Predict Dryness"])
          " "
          (when (:admin session)
            (when-let  [prediction (get @predictions
