@@ -42,14 +42,14 @@
             [b/Nav {:class-name "mr-auto" :navbar true}
              [nav-link "Home" :home]
              [nav-link "About" :about]
-             [b/NavLink  {:href "/auth/init"} "Sign-in"]]
+             [b/NavLink  {:href "/auth/init" :class-name "right"} "Sign-in"]]
             [b/Nav {:class-name "mr-auto" :navbar true}
              [nav-link "Home"    :home]
              [nav-link "Devices" :devices]
              (when (:admin @session ) [nav-link "Owners"  :owners])
              (when (:admin @session ) [nav-link "Alerts"  :alerts])
              [nav-link "About"   :about]
-             [b/NavLink  {:href "/auth/out"} "Sign-out"]])]]))))
+             [b/NavLink  {:href "/auth/out" :class-name "right"} "Sign-out"]])]]))))
 
 
 (rf/reg-sub
@@ -152,7 +152,8 @@
    [alertbar]
    [kf/switch-route
     (fn [route]
-      (mix/track (get-in route [:path]))
+      (mix/track-pageview (get-in route [:path]))
+      (mix/track (str (get-in route [:data :name])))
       (get-in route [:data :name]))
     :home [home-page]
     :about [about-page]

@@ -34,14 +34,15 @@ SELECT * FROM metrics
 SELECT DISTINCT AVG(humidity) humidity,
                 AVG(temperature) temperature,
                 device_id,
+                metric_name,
                 to_timestamp(floor((extract('epoch' from timestamp) / :interval)) * :interval) AT TIME ZONE 'UTC' as interval_alias
   FROM metrics
  WHERE device_id = :device_id
-   AND timestamp > :limit
-                      AND ( metric_name = "temperature"
-                           OR metric_name = "humidity" )
- GROUP BY interval_alias,device_id
- ORDER BY interval_alias DESC
+   AND timestamp > :after_time
+                      AND ( metric_name = 'temperature'
+                           OR metric_name = 'humidity' )
+ GROUP BY interval_alias, device_id, metric_name
+ ORDER BY interval_alias DESC;
 
 
 -- :name get-images-by-device :? :*

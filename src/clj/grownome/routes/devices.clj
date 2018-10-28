@@ -8,7 +8,8 @@
    [grownome.utils.google-auth :as ga]
    [clojure.tools.logging :as log]
    [clj-time.jdbc]
-
+   [clj-time.core :as ct]
+   [clj-time.coerce :as cc]
    [java-time :as jt]
    [ring.util.http-response :as response]))
 
@@ -52,13 +53,25 @@
   (update metric
           (keyword (:metric-name metric))
           (fn [v] (.floatValue v))))
+(defn fix-metric-timestamp
+  [metric]
+  (assoc metric :timestamp (:interval-alias metric)))
 
-(def metric-fixer  fix-metrics-values)
+(def metric-fixer  (comp  fix-metrics-values
+                          fix-metric-timestamp))
 
 (defn get-device-metrics
-  [{:keys [path-params] :as req}]
-  (let [raw-metrics
-        (db/get-metrics-by-device {:id (read-string  (:id path-params))})
+  [{:keys [path-params params] :as req}]
+  (let [interval (read-string
+                  (get params :interval "2400"))
+        after  (cc/from-epoch (or (read-string
+                                   (get params :after ))
+                                  (ct/ago (ct/days 7))))
+
+        raw-metrics
+        (db/get-metrics-summary-by-device {:interval interval
+                                           :after_time after
+                                           :device_id (read-string  (:id path-params))})
         fixed-metrics (map metric-fixer raw-metrics)
         groups (group-by :metric-name fixed-metrics)
         resp {:id (read-string (:id path-params))
