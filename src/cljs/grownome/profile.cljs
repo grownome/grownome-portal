@@ -20,6 +20,15 @@
  {:params (constantly true)
   :start  [::load-profile-page]})
 
+(defn start-intercom
+  [profile]
+  (js/Intercom "boot"
+               #js
+               {"app_id" "l9gd6itn",
+                "email" (:email profile)
+                "user_id" (:id profile)
+                "admin" (or (:admin profile) false)}))
+
 (kf/reg-chain
  ::load-profile-page
  (fn [_ _]
@@ -30,6 +39,7 @@
    (when (not (=  (:profile db) profile))
      (js/console.log "time to update")
      (js/console.log profile)
+     (start-intercom profile)
      (mix/identify (:id profile))
      (mix/name-tag (:email profile))
      (mix/set-people-props
