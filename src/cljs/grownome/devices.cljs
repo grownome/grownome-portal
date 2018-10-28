@@ -86,7 +86,7 @@
          [b/CardImg {:top true
                      :width "100%"
                      :height "100%"
-                     
+                     :href (get  (nth (:images device) @image-slider-value) :path "test")
                      :src (get  (nth (:images device) @image-slider-value) :path "test")}])
        [b/CardBody {:style {"paddingTop" "50px"
                             "overflow" "hidden"}}

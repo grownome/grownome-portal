@@ -128,7 +128,7 @@
    {:interval (* 4  datetime/day)   :string "4 days ago"}
    {:interval (* 7 datetime/day)   :string "1 week ago"}
    {:interval (* 14 datetime/day)      :string "2 weeks ago"}
-   {:interval (* 1 datetime/month)     :string "1 day ago"}
+   {:interval (* 1 datetime/month)     :string "1 month ago"}
    {:interval (datetime/unix-timestamp)     :string "forever"}])
 
 
