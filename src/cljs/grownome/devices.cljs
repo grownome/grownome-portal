@@ -86,7 +86,15 @@
          [b/CardImg {:top true
                      :width "100%"
                      :height "100%"
-                     :style {"transform" "rotate(90deg)"}
+                     :on-load
+                     (fn [e]
+                       (let [img (-> e .-target )
+                             width (.-clientWidth img)
+                             height (.-clientHeight img)]
+                         (when (> width height)
+                           (js/console.log "need to rotate")
+                           (.setAttribute img "style"
+                                 "transform: rotate(90deg);"))))
                      :src (get  (nth (:images device) @image-slider-value) :path "test")}])
        [b/CardBody {:style {"paddingTop" "50px"
                             "overflow" "hidden"}}
