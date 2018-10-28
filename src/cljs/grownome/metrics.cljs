@@ -15,6 +15,14 @@
             [goog.Uri.QueryData]
             [grownome.routing :as routing]))
 
+(defn default-after
+  []
+  (- (datetime/unix-timestamp)  (* 7 datetime/day)))
+
+(def default-interval
+  (* 30 datetime/minute))
+
+
 (kf/reg-controller
  ::device-metrics-controller
  {:params (fn [{:keys [data path-params query-string]}]
@@ -27,16 +35,9 @@
   :start (fn [ctx [id query-map]]
            [::load-device-metrics-page
             id
-            (get query-map "after")
-            (get query-map "interval")
+            (get query-map "after" (default-after))
+            (get query-map "interval" default-interval)
             ])})
-
-(defn default-after
-  []
-  (- (datetime/unix-timestamp)  (* 7 datetime/day)))
-
-(def default-interval
-  (* 10 datetime/minute))
 
 (kf/reg-chain
  ::load-device-metrics-page
