@@ -18,7 +18,7 @@
         ]
     (if (and device-id user)
       (let [db-req (db/add-owner!
-                    {:device_id device-id
+                    {:device_id (read-string device-id)
                      :user_id (:id user)
                      :created_on (java.util.Date.)})]
         (if (= 1 db-req)
