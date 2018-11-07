@@ -120,12 +120,18 @@
 (defn home-page []
   [:div.container
    [:div.row>div.col-sm-12
-    [:h2.alert.alert-dark "Welcome to Grownome"]
-    [:h4 "Just added time picker for metrics"]
-    [:h4 "Next up is being able to click on images
-and have them expand."]
-
-    ]
+    [:h4 "Thank you for using and testing Grownome. Please send bug
+reports, feature requests and any other information to "
+     [b/Badge {:href "mailto:support@grownome.com" :color "info" :class "h2"}
+      (str "support@grownome.com")]
+     " or through the chat box at the bottom right."]]
+   [:br]
+   [:h2.alert.alert-dark "Newest update: Time picker for data metrics"]
+   [:h4 "Time picker allows you to select the time period of data metrics that is displayed."]
+   [:br]
+   [:h4 "Next up: 1. Being able to click on images
+and have them expand.
+2. Individual image selector. "]
    (when-let [docs @(rf/subscribe [:docs])]
      [:div.row>div.col-sm-12
       [:div ]])])
