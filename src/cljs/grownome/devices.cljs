@@ -5,6 +5,7 @@
             [reagent.core :as r]
             [re-frame.core :as rf]
             [grownome.ajax :as ajax]
+            [grownome.analytics.mixpanel :as mix]
             [grownome.routing :as routing]))
 
 (kf/reg-controller
@@ -38,6 +39,7 @@
 (kf/reg-chain
  ::get-prediction
  (fn [_ [image-url]]
+   (mix/track "predicted")
    {:http {:method      :get
            :url         "/predict"
            :ajax-map {:params  {:url image-url}}
@@ -73,6 +75,20 @@
  (fn [db [_]]
    (get-in db [:predictions])))
 
+(defn dec-min
+  [v min]
+  (if (= v min )
+    v
+    (dec v)))
+
+(defn inc-max
+  [v max]
+  (if (= v max)
+    v
+    (inc v)))
+
+
+
 (defn device-card
   [id]
   (let [device     @(rf/subscribe [:device id])
@@ -98,7 +114,7 @@
            [b/CardTitle (:id device)])
          (when (not-empty (:images device))
            [:div (str "created on: "
-                      (get  (nth (:images device) @image-slider-value) :created-on)) ])
+                      (get  (nth (:images device) @image-slider-value) :created-on))])
          [:div "time slider"]
 
          [b/Input {:type "range"
@@ -106,12 +122,14 @@
                    :on-change #(reset! image-slider-value (js/parseInt (-> % .-target .-value)))
                    :min 0
                    :max (dec (count (:images device)))}]
+
+         [b/Button {:on-click #(swap! image-slider-value dec-min 0)} "<"]
+         [b/Button {:on-click #(swap! image-slider-value inc-max (dec (count  (:images device))))} ">"]
          [b/Button {:href (kf/path-for
                            [:metrics {:id (:id device)}])} "metrics" ]
          [:div (str "total image count: " (count (:images device)))]
          " "
-         (when (:admin session)
-           [b/Button {:on-click
+         [b/Button {:on-click
                       (fn []
                         (let [slider
                               (get (nth
@@ -120,7 +138,7 @@
                           (rf/dispatch [::get-prediction
                                         slider
                                         ])))}
-            "Predict Dryness"])
+            "Predict Dryness"]
          " "
          (when (:admin session)
            (when-let  [prediction (get @predictions
