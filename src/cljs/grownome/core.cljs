@@ -126,12 +126,9 @@ reports, feature requests and any other information to "
       (str "support@grownome.com")]
      " or through the chat box at the bottom right."]]
    [:br]
-   [:h2.alert.alert-dark "Newest update: Time picker for data metrics"]
-   [:h4 "Time picker allows you to select the time period of data metrics that is displayed."]
+   [:h2.alert.alert-dark "Newest update: left and right arrows for easier changing navigation of photos"]
+   [:h2.alert.alert-dark "Alpha Feature: Dryness prediction. Our first ai feature is in the works. Try it out and tell us what you think. It's constantly getting better."]
    [:br]
-   [:h4 "Next up: 1. Being able to click on images
-and have them expand.
-2. Individual image selector. "]
    (when-let [docs @(rf/subscribe [:docs])]
      [:div.row>div.col-sm-12
       [:div ]])])

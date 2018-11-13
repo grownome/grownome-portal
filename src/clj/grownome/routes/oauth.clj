@@ -3,6 +3,7 @@
             [clojure.java.io :as io]
             [grownome.db.core :as  db]
             [clj-http.client :as client]
+            [clojure.string :as strings]
             [ring.middleware.oauth2 :as oauth2]
             [grownome.oauth2 :as okta]
             [camel-snake-kebab.extras :refer [transform-keys]]
@@ -22,11 +23,12 @@
 
 (defn get-oauth-metadata
   [access-token]
-  (:body
-   (client/get "https://grownome.auth0.com/userinfo"
-               {:headers {"Authorization"
-                          (str "Bearer " access-token)}
-                :as :json})))
+  (let [resp (client/get "https://grownome.auth0.com/userinfo"
+                         {:headers {"Authorization"
+                                    (str "Bearer " access-token)}
+                          :as :json})]
+    (log/debug resp)
+    (:body resp)))
 
 (defn get-or-create-user
   [auth0-identity]
@@ -97,11 +99,29 @@
                  (assoc session :user-id user-id :screen-name screen-name)))))
   callback)
 
+(defn get-user-info
+  [{:keys [headers] :as req}]
+   (log/debug (get headers "authorization"))
+  (if (get headers "authorization")
+    (let [token (second
+                 (strings/split
+                  (get headers "authorization")
+                  #" "))
+          user-data (get-oauth-metadata token)]
+      (log/debug token)
+      (log/debug user-data)
+      (if ( not-empty user-data)
+          (response/ok user-data)
+        (response/unauthorized)))
+    (response/unauthorized)))
 
 (defn oauth-routes []
-  ["/auth"
-   ["/init" {:get (okta/wrap-oauth2-okta oauth-init)}]
-   ["/out" {:get (drop-session sign-out)}]
-   ["/logout" {:get (drop-session #(response/permanent-redirect "/"))}]
-   ["/callback" {:get (get-user-profile-wrap (okta/wrap-oauth2-okta  oauth-callback))}]])
+  [
+   ["/ifttt/v1/"
+    ["user/info" {:get get-user-info}]]
+   ["/auth"
+    ["/init" {:get (okta/wrap-oauth2-okta oauth-init)}]
+    ["/out" {:get (drop-session sign-out)}]
+    ["/logout" {:get (drop-session #(response/permanent-redirect "/"))}]
+    ["/callback" {:get (get-user-profile-wrap (okta/wrap-oauth2-okta  oauth-callback))}]]])
 
