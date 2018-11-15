@@ -122,6 +122,8 @@
                    :on-change #(reset! image-slider-value (js/parseInt (-> % .-target .-value)))
                    :min 0
                    :max (dec (count (:images device)))}]
+         [:div (str "total image count: " (count (:images device)))]
+         [:br]
          [:div
           [b/Button {:on-click #(swap! image-slider-value dec-min 0)} "<"]
           " " " "
@@ -129,8 +131,8 @@
                             [:metrics {:id (:id device)}])} "metrics" ]
           " "
           [b/Button {:on-click #(swap! image-slider-value inc-max (dec (count  (:images device))))} ">"]]
-         [:div (str "total image count: " (count (:images device)))]
-          " "
+         " "
+         [:br]
          [b/Button {:on-click
                       (fn []
                         (let [slider
