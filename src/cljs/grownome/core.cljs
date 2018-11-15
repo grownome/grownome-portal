@@ -126,8 +126,19 @@ reports, feature requests and any other information to "
       (str "support@grownome.com")]
      " or through the chat box at the bottom right."]]
    [:br]
-   [:h2.alert.alert-dark "Newest update: left and right arrows for easier changing navigation of photos"]
-   [:h2.alert.alert-dark "Alpha Feature: Dryness prediction. Our first ai feature is in the works. Try it out and tell us what you think. It's constantly getting better."]
+   [b/CardDeck
+   [b/Card  {:style {"overflow"  "hidden"
+                     "max-width" "300px"}}
+    [b/CardBody {:style {"paddingTop" "20px"
+                         "overflow" "hidden"}}
+     [b/CardTitle "Newest Update"]
+     [:h2 "Left and right arrows allow for precise photo selection"]]]
+   [b/Card  {:style {"overflow"  "hidden"
+                     }}
+    [b/CardBody {:style {"paddingTop" "20px"
+                         "overflow" "hidden"}}
+     [b/CardTitle "Alpha Feature"]
+     [:h2 "'Dryness Predictor' analyzes your images to predict how dry your platns are. Try it out and let us know what you think of it. This is a beta feature that we are constantly improving."]]]]
    [:br]
    (when-let [docs @(rf/subscribe [:docs])]
      [:div.row>div.col-sm-12
