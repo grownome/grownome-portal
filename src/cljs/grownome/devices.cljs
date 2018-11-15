@@ -115,20 +115,22 @@
          (when (not-empty (:images device))
            [:div (str "created on: "
                       (get  (nth (:images device) @image-slider-value) :created-on))])
-         [:div "time slider"]
-
+         [:br]
+         [:div "Image Slider"]
          [b/Input {:type "range"
                    :value @image-slider-value
                    :on-change #(reset! image-slider-value (js/parseInt (-> % .-target .-value)))
                    :min 0
                    :max (dec (count (:images device)))}]
-
-         [b/Button {:on-click #(swap! image-slider-value dec-min 0)} "<"]
-         [b/Button {:on-click #(swap! image-slider-value inc-max (dec (count  (:images device))))} ">"]
-         [b/Button {:href (kf/path-for
-                           [:metrics {:id (:id device)}])} "metrics" ]
+         [:div
+          [b/Button {:on-click #(swap! image-slider-value dec-min 0)} "<"]
+          " " " "
+          [b/Button {:href (kf/path-for
+                            [:metrics {:id (:id device)}])} "metrics" ]
+          " "
+          [b/Button {:on-click #(swap! image-slider-value inc-max (dec (count  (:images device))))} ">"]]
          [:div (str "total image count: " (count (:images device)))]
-         " "
+          " "
          [b/Button {:on-click
                       (fn []
                         (let [slider

@@ -106,7 +106,7 @@
    :dev           [:project/dev :profiles/dev]
    :test          [:project/dev :project/test :profiles/test]
 
-   :project/dev  {:jvm-opts ["-Dconf=dev-config.edn" "--add-modules" "java.xml.bind"]
+   :project/dev  {:jvm-opts ["-Dconf=dev-config.edn" "--illegal-access=permit"]
 			;for Aaron's config: :jvm-opts ["-Dconf=dev-config.edn" "--illegal-access=permit"]
                   :dependencies [[binaryage/devtools "0.9.10"]
                                  [cider/piggieback "0.3.9"]
