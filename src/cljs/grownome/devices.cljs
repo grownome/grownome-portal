@@ -104,7 +104,7 @@
                      :height "100%"
                      :href (get  (nth (:images device) @image-slider-value) :path "test")
                      :src (get  (nth (:images device) @image-slider-value) :path "test")}])
-       [b/CardBody {:style {"paddingTop" "50px"
+       [b/CardBody {:style {"paddingTop" "20px"
                             "overflow" "hidden"}}
         [:div
          [b/CardTitle  (:name device) ]
