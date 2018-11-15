@@ -138,7 +138,7 @@ reports, feature requests and any other information to "
     [b/CardBody {:style {"paddingTop" "20px"
                          "overflow" "hidden"}}
      [b/CardTitle "Alpha Feature"]
-     [:h2 "'Dryness Predictor' analyzes your images to predict how dry your platns are. Try it out and let us know what you think of it. This is a beta feature that we are constantly improving."]]]]
+     [:h2 "'Dryness Predictor' analyzes your images to predict how dry your plants are. Try it out and let us know what you think of it. This is a beta feature that we are constantly improving."]]]]
    [:br]
    (when-let [docs @(rf/subscribe [:docs])]
      [:div.row>div.col-sm-12
