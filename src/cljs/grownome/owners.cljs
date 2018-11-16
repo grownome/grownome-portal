@@ -61,6 +61,24 @@
       [:div
        [:h4  (:device-id @owner) "is owned by" (:user-id @owner)]])))
 
+(defn owner-table
+  [id]
+  (let [owner       (rf/subscribe [:owner id])
+        session    @(rf/subscribe [:session])]
+    (fn []
+      (js/console.log @owner)
+      [b/Table
+       [:tbody
+       [:tr
+        [:td (:device-id @owner)]
+        [:td " is owned by "]
+        [:td (:user-id @owner)]
+        ]
+       ]]
+      )
+    ))
+
+
 (defn new-owner []
   (let [ds (rf/subscribe [:device-name-ids])]
     (fn []
@@ -104,7 +122,7 @@
              {:on-click #(do
                            (swap! owner assoc-in [:created-on] (js/Date.))
                            (rf/dispatch [::post-owner @owner]))}
-             "Add Add Owner"]]]]]))))
+             "Add New Owner"]]]]]))))
 
 (defn owners-page []
   (let [owner-ids @(rf/subscribe [:owner-ids])
@@ -113,11 +131,18 @@
     (js/console.log owner-ids)
     (if (:email session)
       [b/Container
+       [b/Table
+       [:thead
+        [:tr
+         [:th "Device ID"]
+         [:th " "]
+         [:th "User"]]]]
        (map-indexed
         (fn [index owner-id]
           [b/Row {:key (str "owner-id-row-" index )}
-           [owner-card owner-id]]) owner-ids)
+           [owner-table owner-id]]) owner-ids)
        [:div.container {:style {"border" "1px"}}
+        [:br]
         [new-owner]]])))
 
 
