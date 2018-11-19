@@ -134,21 +134,23 @@
          " "
          [:br]
          [b/Button {:on-click
-                      (fn []
-                        (let [slider
-                              (get (nth
-                                    (:images device)
-                                    @image-slider-value) :path)]
-                          (rf/dispatch [::get-prediction
-                                        slider
-                                        ])))}
-            "Predict Dryness"]
+                    (fn []
+                      (let [slider
+                            (get (nth
+                                  (:images device)
+                                  @image-slider-value) :path)]
+                        (rf/dispatch [::get-prediction
+                                      slider
+                                      ])))}
+          "Predict Dryness"]
          " "
          (when (:admin session)
-           (when-let  [prediction (get @predictions
+           (when-let  [prediction (if (empty? (:images device))
+                                    (== nth nil)
+                                    (get @predictions
                                        (get (nth
                                              (:images device)
-                                             @image-slider-value) :path))]
+                                             @image-slider-value) :path)))]
              [:div "something should be here"]
              [b/CardBody 
               [:div { }

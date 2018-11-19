@@ -100,7 +100,7 @@
         (for [l @loading]
           [b/Alert
            {:color "dark"}
-           (str "loading " )l]))])))
+           (str "loading " )]))])))
 
 (defn about-page []
   [:div.container

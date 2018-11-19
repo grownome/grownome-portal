@@ -48,6 +48,11 @@
    (keys (:owners db))))
 
 (rf/reg-sub
+ :device-ids
+ (fn [db _]
+   (keys (:devices db))))
+
+(rf/reg-sub
  :owner
  (fn [db [_ id]]
    (get-in db [:owners id])))
@@ -64,13 +69,15 @@
 (defn owner-table
   [id]
   (let [owner       (rf/subscribe [:owner id])
+        device      (rf/subscribe [:device id])
         session    @(rf/subscribe [:session])]
-    (fn []
+    (fn [id]
       (js/console.log @owner)
       [b/Table
        [:tbody
        [:tr
         [:td (:device-id @owner)]
+        [:td (:resin-name @device)]
         [:td " is owned by "]
         [:td (:user-id @owner)]
         ]
