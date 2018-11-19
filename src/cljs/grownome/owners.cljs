@@ -27,7 +27,7 @@
    {:http {:method      :get
            :url         "/devices"
            :error-event [:common/set-error]}})
- (fn [{:keys [db]} [_ _ devices]]
+ (fn [{:keys [db]} [_ devices]]
    {:db (assoc db :devices (into {} (map #(vector (:id %) %) devices)) )})
  )
 
@@ -38,7 +38,7 @@
            :url         "/admin/owners"
            :ajax-map {:params owner}
            :error-event [:common/set-error]}})
- (fn [{:keys [db]} [_ owner]]
+ (fn [{:keys [db]} [_ _ owner]]
    {:dispatch [::load-owners-page]}))
 
 
@@ -51,6 +51,20 @@
  :device-ids
  (fn [db _]
    (keys (:devices db))))
+
+(rf/reg-sub
+ :device-name-ids
+ (fn [db _]
+   (into []
+         (map (fn [[i device]]
+                {:id i
+                 :name  (:name device)})
+              (:devices db)))))
+
+(rf/reg-sub
+ :device
+ (fn [db [_ id]]
+   (get-in db [:devices id])))
 
 (rf/reg-sub
  :owner
@@ -69,19 +83,19 @@
 (defn owner-table
   [id]
   (let [owner       (rf/subscribe [:owner id])
-        device      (rf/subscribe [:device id])
+        device     @(rf/subscribe [:device id])
         session    @(rf/subscribe [:session])]
     (fn [id]
       (js/console.log @owner)
       [b/Table
        [:tbody
-       [:tr
-        [:td (:device-id @owner)]
-        [:td (:resin-name @device)]
-        [:td " is owned by "]
-        [:td (:user-id @owner)]
-        ]
-       ]]
+        [:tr
+         [:td (:device-id @owner)]
+         [:td (:resin-name device)]
+         [:td " is owned by "]
+         [:td (:user-id @owner)]
+         ]
+        ]]
       )
     ))
 
@@ -142,6 +156,7 @@
        [:thead
         [:tr
          [:th "Device ID"]
+         [:th "Resin Name"]
          [:th " "]
          [:th "User"]]]]
        (map-indexed

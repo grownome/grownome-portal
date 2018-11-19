@@ -63,8 +63,6 @@
                  :name  (:name device)})
               (:devices db)))))
 
-
-
 (rf/reg-sub
  :device
  (fn [db [_ id]]
@@ -202,13 +200,7 @@
                   :value (:resin-name @device)
                   :on-change #(swap! device assoc-in [:resin-name] (-> % .-target .-value))
                   :placeholder "broken-sunrise"}]]
-       [b/FormGroup
-        [b/Label {:for "short-link"} "Shortlink"]
-        [b/Input {:type "text"
-                  :name "short-link"
-                  :value (:short-link @device)
-                  :on-change #(swap! device assoc-in [:short-link] (-> % .-target .-value))
-                  :placeholder "nome.run/adevice"}]]]]
+       ]]
      [b/Row
       [b/Col
        [b/Button
