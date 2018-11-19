@@ -27,7 +27,7 @@
    {:http {:method      :get
            :url         "/devices"
            :error-event [:common/set-error]}})
- (fn [{:keys [db]} [_ _ devices]]
+ (fn [{:keys [db]} [_ devices]]
    {:db (assoc db :devices (into {} (map #(vector (:id %) %) devices)) )})
  )
 
@@ -38,7 +38,7 @@
            :url         "/admin/owners"
            :ajax-map {:params owner}
            :error-event [:common/set-error]}})
- (fn [{:keys [db]} [_ owner]]
+ (fn [{:keys [db]} [_ _ owner]]
    {:dispatch [::load-owners-page]}))
 
 
@@ -46,6 +46,25 @@
  :owner-ids
  (fn [db _]
    (keys (:owners db))))
+
+(rf/reg-sub
+ :device-ids
+ (fn [db _]
+   (keys (:devices db))))
+
+(rf/reg-sub
+ :device-name-ids
+ (fn [db _]
+   (into []
+         (map (fn [[i device]]
+                {:id i
+                 :name  (:name device)})
+              (:devices db)))))
+
+(rf/reg-sub
+ :device
+ (fn [db [_ id]]
+   (get-in db [:devices id])))
 
 (rf/reg-sub
  :owner
@@ -60,6 +79,26 @@
       (js/console.log @owner)
       [:div
        [:h4  (:device-id @owner) "is owned by" (:user-id @owner)]])))
+
+(defn owner-table
+  [id]
+  (let [owner       (rf/subscribe [:owner id])
+        device     @(rf/subscribe [:device id])
+        session    @(rf/subscribe [:session])]
+    (fn [id]
+      (js/console.log @owner)
+      [b/Table
+       [:tbody
+        [:tr
+         [:td (:device-id @owner)]
+         [:td (:resin-name device)]
+         [:td " is owned by "]
+         [:td (:user-id @owner)]
+         ]
+        ]]
+      )
+    ))
+
 
 (defn new-owner []
   (let [ds (rf/subscribe [:device-name-ids])]
@@ -104,7 +143,7 @@
              {:on-click #(do
                            (swap! owner assoc-in [:created-on] (js/Date.))
                            (rf/dispatch [::post-owner @owner]))}
-             "Add Add Owner"]]]]]))))
+             "Add New Owner"]]]]]))))
 
 (defn owners-page []
   (let [owner-ids @(rf/subscribe [:owner-ids])
@@ -113,11 +152,19 @@
     (js/console.log owner-ids)
     (if (:email session)
       [b/Container
+       [b/Table
+       [:thead
+        [:tr
+         [:th "Device ID"]
+         [:th "Resin Name"]
+         [:th " "]
+         [:th "User"]]]]
        (map-indexed
         (fn [index owner-id]
           [b/Row {:key (str "owner-id-row-" index )}
-           [owner-card owner-id]]) owner-ids)
+           [owner-table owner-id]]) owner-ids)
        [:div.container {:style {"border" "1px"}}
+        [:br]
         [new-owner]]])))
 
 

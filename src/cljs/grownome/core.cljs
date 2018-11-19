@@ -100,7 +100,7 @@
         (for [l @loading]
           [b/Alert
            {:color "dark"}
-           (str "loading " )l]))])))
+           (str "loading " )]))])))
 
 (defn about-page []
   [:div.container
@@ -122,7 +122,7 @@
    [:div.row>div.col-sm-12
     [:h4 "Thank you for using and testing Grownome. Please send bug
 reports, feature requests and any other information to "
-     [b/Badge {:href "mailto:support@grownome.com" :color "info" :class "h2"}
+     [b/Badge {:href "mailto:supportf4258eb2d368994226f6592a31e5dc80f30cc490@grownome.com" :color "info" :class "h2"}
       (str "support@grownome.com")]
      " or through the chat box at the bottom right."]]
    [:br]

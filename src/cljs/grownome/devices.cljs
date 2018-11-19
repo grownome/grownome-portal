@@ -63,8 +63,6 @@
                  :name  (:name device)})
               (:devices db)))))
 
-
-
 (rf/reg-sub
  :device
  (fn [db [_ id]]
@@ -134,21 +132,23 @@
          " "
          [:br]
          [b/Button {:on-click
-                      (fn []
-                        (let [slider
-                              (get (nth
-                                    (:images device)
-                                    @image-slider-value) :path)]
-                          (rf/dispatch [::get-prediction
-                                        slider
-                                        ])))}
-            "Predict Dryness"]
+                    (fn []
+                      (let [slider
+                            (get (nth
+                                  (:images device)
+                                  @image-slider-value) :path)]
+                        (rf/dispatch [::get-prediction
+                                      slider
+                                      ])))}
+          "Predict Dryness"]
          " "
          (when (:admin session)
-           (when-let  [prediction (get @predictions
+           (when-let  [prediction (if (empty? (:images device))
+                                    (== nth nil)
+                                    (get @predictions
                                        (get (nth
                                              (:images device)
-                                             @image-slider-value) :path))]
+                                             @image-slider-value) :path)))]
              [:div "something should be here"]
              [b/CardBody 
               [:div { }
@@ -200,13 +200,7 @@
                   :value (:resin-name @device)
                   :on-change #(swap! device assoc-in [:resin-name] (-> % .-target .-value))
                   :placeholder "broken-sunrise"}]]
-       [b/FormGroup
-        [b/Label {:for "short-link"} "Shortlink"]
-        [b/Input {:type "text"
-                  :name "short-link"
-                  :value (:short-link @device)
-                  :on-change #(swap! device assoc-in [:short-link] (-> % .-target .-value))
-                  :placeholder "nome.run/adevice"}]]]]
+       ]]
      [b/Row
       [b/Col
        [b/Button
